@@ -599,6 +599,7 @@ function renderSignalPanels(){
 function toggleSignal(key,val){if(!selected[key])return;if(selected[key].has(val))selected[key].delete(val);else selected[key].add(val);renderSignalPanels()}
 
 function goStep(n){
+  window.scrollTo({top:0,behavior:'smooth'});
   document.querySelectorAll('[id^="step"]').forEach(el=>el.classList.add('hidden'));
   const el=document.getElementById('step'+n);if(el)el.classList.remove('hidden');
   if(n===2)renderSignalPanels();
@@ -634,6 +635,7 @@ function sendEmail(){
 }
 
 function showPortal(id){
+  window.scrollTo({top:0,behavior:'smooth'});
   ['portal-home','portal-overlap','portal-grants','portal-agencies','portal-glossary','portal-staff','portal-programs','portal-admin'].forEach(pid=>{const el=document.getElementById(pid);if(el)el.classList.add('hidden')});
   const target=document.getElementById('portal-'+id);if(target)target.classList.remove('hidden');
   document.querySelectorAll('.portal-btn').forEach(b=>b.classList.remove('active'));
