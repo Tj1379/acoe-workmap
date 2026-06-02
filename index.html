@@ -493,12 +493,18 @@ function limitedCardList(items,renderer,limit,label){const shown=items.slice(0,l
 function renderFundingLaneSet(records){
   return['direct','likely','needs-validation'].map(key=>{
     const lr=records.filter(r=>fundingLane(r).key===key);if(!lr.length)return'';
-    const meta={direct:{title:'Directly mapped',copy:'Confirmed or locally mapped funding route.'},likely:{title:'Likely overlap',copy:'Shared signals. No direct owner mapping yet.'},'needs-validation':{title:'Needs validation',copy:'Partner, draft, or unconfirmed record. Verify before routing.'}}[key];
-    return`<div class="lane-block"><div class="lane-hdr"><div><div class="lane-title">${esc(meta.title)}</div><div class="lane-copy">${esc(meta.copy)}</div></div><span class="pill ${key==='direct'?'green':key==='needs-validation'?'gold':'teal'}">${lr.length}</span></div><div class="lane-body">${lr.map(grantCard).join('')}</div></div>`;
+    const meta={direct:{title:'Directly mapped',copy:'Confirmed or locally mapped funding route.'},likely:{title:'Likely overlap',copy:'Shared signals. No direct owner mapping yet.'},'needs-validation':{title:'Needs validation — includes partner agencies',copy:'Partner records and unconfirmed records. Verify before routing.'}}[key];
+    const tone=key==='direct'?'green':key==='needs-validation'?'gold':'teal';
+    const cards=lr.map(grantCard).join('');
+    // Collapse needs-validation by default so it surfaces but doesn't overwhelm
+    if(key==='needs-validation'){
+      return`<details class="lane-block" open><summary style="padding:.55rem .75rem;background:var(--slate-l);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;list-style:none"><div><div class="lane-title">${esc(meta.title)}</div><div class="lane-copy">${esc(meta.copy)}</div></div><span class="pill ${tone}">${lr.length}</span></summary><div class="lane-body">${cards}</div></details>`;
+    }
+    return`<div class="lane-block"><div class="lane-hdr"><div><div class="lane-title">${esc(meta.title)}</div><div class="lane-copy">${esc(meta.copy)}</div></div><span class="pill ${tone}">${lr.length}</span></div><div class="lane-body">${cards}</div></div>`;
   }).join('');
 }
 
-function fundingLaneSections(records,limit){const shown=records.slice(0,limit);const hidden=records.slice(limit);let html=renderFundingLaneSet(shown);if(hidden.length)html+=`<details class="advanced-block"><summary>Show ${hidden.length} more funding matches</summary><div class="lane-body">${renderFundingLaneSet(hidden)}</div></details>`;return html}
+function fundingLaneSections(records){return renderFundingLaneSet(records);}
 
 function routeCard(primary,cc,finalView){if(!primary)return'';const ccText=cc.length?cc.map(p=>esc(p.name)).join(', '):'No additional stakeholders from these signals.';return`<div class="route-card"><div class="route-label">${finalView?'Suggested email route':'Suggested starting point'}</div><div class="route-name">${esc(primary.name)}</div><div class="route-role">${esc(primary.role)}</div><div class="route-reason"><strong>Why suggested:</strong> ${esc(primary.reasons.map(r=>r.text).join(', '))}<br><strong>Loop in:</strong> ${ccText}</div><div class="route-actions"><a class="route-btn" href="mailto:${esc(primary.email)}">Email suggested contact</a><button class="route-btn" onclick="goStep(4)">Prepare email</button></div></div>`}
 
@@ -508,7 +514,7 @@ function renderResults(){
   document.getElementById('results-count').textContent=staff.length+' staff match'+(staff.length!==1?'es':'')+' / '+grants.length+' funding match'+(grants.length!==1?'es':'');
   document.getElementById('route-preview').innerHTML=primary?routeCard(primary,cc,false):'<div class="empty-state">No staff overlap found. Try a different work area or clear and start again.</div>';
   document.getElementById('staff-cards').innerHTML=staff.length?limitedCardList(staff,staffCard,3,'staff matches'):'<div class="empty-state">No staff matches.</div>';
-  document.getElementById('grant-cards').innerHTML=grants.length?fundingLaneSections(grants,3):'<div class="empty-state">No current funding record is mapped to this area yet.</div>';
+  document.getElementById('grant-cards').innerHTML=grants.length?fundingLaneSections(grants):'<div class="empty-state">No current funding record is mapped to this area yet.</div>';
 }
 
 function renderWorkAreas(){
@@ -607,7 +613,7 @@ function goStep(n){
     const r=calculateResults();lastResults=r;const{staff,grants,primary,cc}=r;
     document.getElementById('step3-route').innerHTML=primary?routeCard(primary,cc,false):'<div class="empty-state">No staff overlap found. Go back and add more signals.</div>';
     document.getElementById('step3-staff').innerHTML=staff.length?limitedCardList(staff,staffCard,3,'staff matches'):'<div class="empty-state">No staff matches.</div>';
-    document.getElementById('step3-grants').innerHTML=grants.length?fundingLaneSections(grants,3):'<div class="empty-state">No funding matches.</div>';
+    document.getElementById('step3-grants').innerHTML=grants.length?fundingLaneSections(grants):'<div class="empty-state">No funding matches.</div>';
   }
   if(n===4)buildEmailDraft();
 }
