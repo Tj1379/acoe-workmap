@@ -1,0 +1,2726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACOE WorkMap</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#0B7691;--teal2:#085566;--teal-l:#D0F4EE;
+  --gold:#C8860A;--gold-l:#FEF3D8;--gold-b:#F5BB4C;
+  --coral:#C94F2A;--coral-l:#FDEEE9;
+  --green:#2D7A4E;--green-l:#E4F3EB;
+  --purple:#5E3A8A;--purple-l:#EDE7F8;
+  --slate:#3D5166;--slate-l:#EEF2F6;
+  --ink:#0F1E2D;--ink2:#233345;--ink3:#4A6070;--ink4:#8AA0B0;
+  --bg:#F5F3EE;--bg2:#ECEAE3;--white:#FFFFFF;
+  --border:rgba(15,30,45,.1);--border2:rgba(15,30,45,.16);
+  --r:12px;--rlg:20px;--pill:100px;
+  --sh:0 1px 4px rgba(0,0,0,.05),0 6px 24px rgba(0,0,0,.05);
+  --sh-h:0 4px 20px rgba(0,0,0,.09),0 16px 48px rgba(0,0,0,.07);
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;font-size:14px;line-height:1.5}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.wrap{max-width:1060px;margin:0 auto;padding:0 1.5rem 4rem}
+.site-hdr{background:var(--teal2);padding:1.5rem 0 0}
+.hdr-inner{max-width:1060px;margin:0 auto;padding:0 1.5rem 1.5rem}
+.hdr-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:.5rem}
+.hdr-brand{display:flex;align-items:center;gap:.8rem}
+.hdr-mark{width:44px;height:44px;background:var(--gold-b);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--teal2);font-family:var(--mono);font-weight:800}
+.hdr-wordmark{font-family:var(--serif);font-size:1.45rem;color:white;line-height:1.15}
+.hdr-wordmark span{color:var(--gold-b)}
+.hdr-sub{font-size:.72rem;color:rgba(255,255,255,.56);text-transform:uppercase;letter-spacing:.08em;margin-top:.15rem}
+.hdr-badge{background:rgba(245,187,76,.15);border:1px solid rgba(245,187,76,.3);border-radius:6px;padding:.3rem .75rem;font-size:.72rem;font-weight:700;color:var(--gold-b);letter-spacing:.04em;align-self:flex-start;margin-top:.25rem;white-space:nowrap}
+.hdr-tagline{font-size:.82rem;color:rgba(255,255,255,.62);font-style:italic;padding-top:.75rem;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.hdr-mini-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.86);border-radius:var(--pill);padding:4px 12px;font-size:.72rem;font-weight:700}
+
+.steps-bar{display:flex;gap:0;margin:2rem 0 1.5rem}
+.step{display:flex;align-items:center;gap:.5rem;flex:1}
+.step-n{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;flex-shrink:0;transition:all .2s}
+.step-n.done{background:var(--teal);color:white}
+.step-n.active{background:var(--gold-b);color:var(--ink)}
+.step-n.todo{background:var(--bg2);color:var(--ink4)}
+.step-label{font-size:.72rem;font-weight:700;color:var(--ink4);transition:color .2s}
+.step-label.active{color:var(--ink)}
+.step-label.done{color:var(--teal)}
+.step-line{flex:1;height:1px;background:var(--border2);margin:0 .25rem;min-width:16px}
+.step-line.done{background:var(--teal)}
+
+.panel{background:var(--white);border-radius:var(--r);border:1px solid var(--border);box-shadow:var(--sh);padding:1.25rem;margin-bottom:1rem;animation:fadeUp .22s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.panel-hdr{margin-bottom:1rem}
+.panel-hdr h2,.panel-hdr h3{font-family:var(--sans);font-size:1.15rem;font-weight:900;color:var(--ink);margin-bottom:.25rem}
+.panel-hdr p{font-size:.82rem;color:var(--ink3);line-height:1.5;max-width:760px}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+@media(max-width:620px){.field-grid{grid-template-columns:1fr}.steps-bar{overflow-x:auto;padding-bottom:.35rem}.step{min-width:112px}}
+.field-full{grid-column:1/-1}
+.fld{display:flex;flex-direction:column;gap:.28rem}
+.fld label{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ink3)}
+.fld input,.fld select,.fld textarea{border:1.5px solid var(--border2);border-radius:9px;padding:.55rem .85rem;font-size:.88rem;color:var(--ink);outline:none;transition:border-color .15s,box-shadow .15s;background:white}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(11,118,145,.08)}
+.fld textarea{resize:vertical;min-height:76px;line-height:1.5}
+
+.split{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);gap:1rem}
+@media(max-width:860px){.split{grid-template-columns:1fr}}
+.callout{background:var(--teal-l);border:1px solid rgba(11,118,145,.28);border-radius:var(--r);padding:.75rem}
+.callout h4{font-family:var(--sans);font-size:.86rem;font-weight:900;color:var(--teal2);margin-bottom:.2rem}
+.callout p{font-size:.78rem;color:var(--ink3);line-height:1.45}
+.callout-list{margin-top:.65rem;display:grid;gap:.45rem}
+.callout-item{background:white;border:1px solid var(--border);border-radius:9px;padding:.55rem .7rem;font-size:.8rem;color:var(--ink3)}
+
+.signal-section{margin-bottom:1.25rem}
+.signal-section-label{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:.55rem;display:flex;align-items:center;gap:.45rem}
+.signal-section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.chips-wrap{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.35rem}
+button.chip{display:inline-flex;align-items:center;gap:.4rem;border:2px solid #CBD5E1;border-radius:8px;padding:.45rem .85rem;font-size:.82rem;color:#3D5166;font-weight:600;background:#FFFFFF;transition:all .15s;user-select:none;line-height:1.4;text-align:left;outline:none;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+button.chip:hover{border-color:#0B7691;color:#0B7691;background:#D0F4EE;box-shadow:0 2px 8px rgba(11,118,145,.12)}
+button.chip.on{border-color:#0B7691;background:#D0F4EE;color:#085566;font-weight:800;box-shadow:0 2px 8px rgba(11,118,145,.15)}
+.chip-dot{width:9px;height:9px;border-radius:50%;background:#CBD5E1;flex-shrink:0;transition:background .15s;display:inline-block}
+button.chip.on .chip-dot{background:#0B7691}
+.selected-summary{background:var(--slate-l);border:1px solid var(--border2);border-radius:var(--r);padding:.85rem 1rem;margin-top:.75rem;font-size:.82rem;color:var(--ink3)}
+.summary-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.5rem}
+.summary-tag{background:white;border:1px solid var(--border2);border-radius:var(--pill);padding:3px 9px;font-size:.72rem;color:var(--ink3)}
+
+.btn-row{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-top:1.25rem;flex-wrap:wrap}
+.nav-btn{background:var(--teal);color:white;border:none;border-radius:var(--pill);padding:10px 26px;font-size:.9rem;font-weight:800;transition:background .15s}
+.nav-btn:hover{background:var(--teal2)}
+.back-btn,.btn-sec{background:transparent;border:1.5px solid var(--border2);color:var(--ink3);border-radius:var(--pill);padding:9px 22px;font-size:.88rem;font-weight:700;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:.35rem}
+.back-btn:hover,.btn-sec:hover{border-color:var(--ink3);color:var(--ink)}
+.btn-green{background:var(--green);color:white;border:none;border-radius:var(--pill);padding:10px 26px;font-size:.9rem;font-weight:800}
+.btn-green:hover{background:#225c3b}
+.btn-small{border:none;border-radius:var(--pill);padding:7px 14px;font-size:.78rem;font-weight:800}
+
+.results-header{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.results-header h3{font-family:var(--serif);font-size:1.25rem;color:var(--ink)}
+.results-count{font-family:var(--mono);font-size:.78rem;background:var(--teal-l);color:var(--teal);border-radius:var(--pill);padding:3px 10px}
+.route-card{background:linear-gradient(135deg,var(--teal2),var(--teal));border-radius:var(--r);padding:1rem;color:white;margin-bottom:1rem;box-shadow:var(--sh)}
+.route-label{font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.64);margin-bottom:.25rem}
+.route-name{font-family:var(--serif);font-size:1.35rem;line-height:1.2;margin-bottom:.2rem}
+.route-meta{font-size:.82rem;color:rgba(255,255,255,.78)}
+.route-reason{margin-top:.75rem;background:rgba(255,255,255,.12);border-radius:9px;padding:.6rem .75rem;font-size:.8rem;line-height:1.55}
+.route-actions{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.85rem}
+.route-btn{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.26);color:white;border-radius:var(--pill);padding:6px 14px;font-size:.78rem;font-weight:800;text-decoration:none}
+
+.grid-two{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+@media(max-width:860px){.grid-two{grid-template-columns:1fr}}
+.match-card{border-radius:var(--r);border:1px solid var(--border);background:white;overflow:hidden;transition:box-shadow .15s;margin-bottom:.6rem}
+.match-card:hover{box-shadow:var(--sh-h)}
+.match-top{display:flex;gap:.75rem;padding:.8rem .9rem;align-items:flex-start}
+.match-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.74rem;font-weight:900;flex-shrink:0;font-family:var(--mono)}
+.match-info{flex:1;min-width:0}
+.match-name{font-weight:800;font-size:.95rem;color:var(--ink);margin-bottom:.1rem}
+.match-tagline{font-size:.8rem;color:var(--ink3);line-height:1.5;margin-bottom:.45rem}
+.match-tags{display:flex;flex-wrap:wrap;gap:.25rem}
+.tag{font-size:.64rem;font-weight:800;border-radius:4px;padding:2px 7px;display:inline-block}
+.match-status{display:flex;flex-direction:column;align-items:flex-end;gap:.35rem;flex-shrink:0}
+.match-status .pill{white-space:nowrap}
+.match-detail{border-top:1px solid var(--border);padding:.75rem .9rem;background:var(--slate-l)}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.55rem}
+.detail-item{background:white;border-radius:8px;padding:.55rem .65rem;border:1px solid var(--border)}
+.detail-label{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--ink4);margin-bottom:.2rem}
+.detail-value{font-size:.82rem;color:var(--ink);line-height:1.5}
+.why-list{margin:0;padding:0;list-style:none;display:grid;gap:.25rem}
+.why-list li{position:relative;padding-left:.8rem}
+.why-list li:before{content:"";position:absolute;left:0;top:.62em;width:4px;height:4px;border-radius:50%;background:var(--teal)}
+
+.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:var(--r);background:white}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{text-align:left;padding:.65rem .75rem;border-bottom:1px solid var(--border);vertical-align:top}
+th{font-size:.66rem;text-transform:uppercase;letter-spacing:.07em;color:var(--ink4);background:var(--slate-l)}
+td{font-size:.8rem;color:var(--ink3)}
+tr:last-child td{border-bottom:none}
+.pill{display:inline-flex;align-items:center;border-radius:var(--pill);padding:2px 8px;font-size:.68rem;font-weight:800;background:var(--bg2);color:var(--ink3);margin:0 3px 3px 0}
+.pill.teal{background:var(--teal-l);color:var(--teal2)}
+.pill.green{background:var(--green-l);color:var(--green)}
+.pill.gold{background:var(--gold-l);color:var(--gold)}
+.pill.purple{background:var(--purple-l);color:var(--purple)}
+
+.request-box{background:var(--teal-l);border:1.5px solid var(--teal);border-radius:var(--rlg);padding:1.25rem;margin-top:1rem}
+.request-box h4{font-family:var(--serif);font-size:1.1rem;color:var(--teal2);margin-bottom:.85rem}
+.empty-state{text-align:center;padding:1.25rem .75rem;color:var(--ink4);font-size:.82rem}
+.notice{font-size:.78rem;color:var(--ink4);font-style:italic;line-height:1.55;margin-top:.5rem}
+.portal-nav{display:flex;gap:.45rem;flex-wrap:wrap;margin:1.25rem 0 .75rem}
+.portal-btn{background:white;border:1.5px solid var(--border2);color:var(--ink3);border-radius:var(--pill);padding:7px 14px;font-size:.78rem;font-weight:800;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.portal-btn.active,.portal-btn:hover{background:var(--teal);border-color:var(--teal);color:white}
+.home-hero{background:linear-gradient(135deg,var(--teal2),var(--teal));border-radius:var(--r);padding:1.05rem 1.15rem;color:white;margin-bottom:.75rem;box-shadow:var(--sh)}
+.home-hero h2{font-family:var(--sans);font-size:1.35rem;font-weight:900;line-height:1.15;margin-bottom:.3rem}
+.home-hero p{max-width:760px;color:rgba(255,255,255,.82);font-size:.84rem;line-height:1.5}
+.home-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.75rem;margin:1rem 0}
+.home-action{background:white;border:1px solid var(--border);border-radius:var(--r);padding:1rem;text-align:left;box-shadow:var(--sh);transition:transform .15s,box-shadow .15s}
+.home-action.primary{background:var(--teal-l);border-color:rgba(11,118,145,.3);grid-column:span 2}
+@media(max-width:760px){.home-action.primary{grid-column:auto}}
+.home-action:hover{transform:translateY(-2px);box-shadow:var(--sh-h)}
+.home-action-kicker{font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;font-weight:900;color:var(--teal);margin-bottom:.25rem}
+.home-action-title{font-family:var(--serif);font-size:1.13rem;color:var(--ink);line-height:1.2;margin-bottom:.25rem}
+.home-action-copy{font-size:.8rem;color:var(--ink3);line-height:1.5}
+.click-guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:.55rem;margin:1rem 0}
+.click-guide button{background:white;border:1px solid var(--border);border-radius:9px;padding:.7rem;text-align:left;box-shadow:var(--sh)}
+.click-guide-k{font-size:.64rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--ink4);margin-bottom:.15rem}
+.click-guide-v{font-size:.82rem;font-weight:900;color:var(--ink)}
+.click-guide button:hover{border-color:var(--teal);box-shadow:var(--sh-h)}
+.work-search{display:flex;gap:.5rem;align-items:center;margin:.75rem 0 1rem}
+.work-search input{flex:1;border:1.5px solid var(--border2);border-radius:var(--pill);padding:.65rem 1rem;color:var(--ink);outline:none}
+.work-search input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(11,118,145,.08)}
+.work-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:.7rem}
+.work-card{background:white;border:1px solid var(--border);border-radius:var(--r);padding:1rem;text-align:left;box-shadow:var(--sh);transition:border-color .15s,transform .15s,box-shadow .15s}
+.work-card:hover{border-color:var(--teal);transform:translateY(-2px);box-shadow:var(--sh-h)}
+.work-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.7rem;margin-bottom:.45rem}
+.work-card-title{font-weight:900;color:var(--ink);line-height:1.25}
+.work-card-count{font-family:var(--mono);font-size:.72rem;border-radius:var(--pill);padding:2px 8px;background:var(--teal-l);color:var(--teal2);font-weight:900;white-space:nowrap}
+.work-card-copy{font-size:.8rem;color:var(--ink3);line-height:1.5;margin-bottom:.55rem}
+.relationship-tags{display:flex;flex-wrap:wrap;gap:.25rem;margin-top:.35rem}
+.relationship-tag{font-size:.64rem;font-weight:900;border-radius:4px;padding:2px 7px;background:var(--gold-l);color:var(--gold)}
+.relationship-tag.warn{background:var(--coral-l);color:var(--coral)}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.55rem;margin-bottom:.85rem}
+.metric{background:var(--slate-l);border:1px solid var(--border);border-radius:var(--r);padding:.8rem}
+.metric-num{font-family:var(--mono);font-size:1.25rem;font-weight:900;color:var(--teal)}
+.metric-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;font-weight:800;color:var(--ink4)}
+.source-link{color:var(--teal);font-weight:800;text-decoration:none}
+.source-link:hover{text-decoration:underline}
+.admin-textarea{width:100%;min-height:260px;border:1.5px solid var(--border2);border-radius:var(--r);padding:.85rem;font-family:var(--mono);font-size:.72rem;color:var(--ink);line-height:1.45;resize:vertical}
+.quick-guide{display:flex;flex-wrap:wrap;gap:.4rem;margin:.65rem 0 .85rem}
+.guide-pill{background:white;border:1px solid var(--border);border-radius:var(--pill);padding:.35rem .65rem;font-size:.75rem;color:var(--ink3)}
+.guide-pill strong{color:var(--ink)}
+.advanced-block{margin-top:.8rem;border:1px solid var(--border);border-radius:var(--r);background:white;overflow:hidden}
+.advanced-block summary{cursor:pointer;font-weight:900;color:var(--ink3);padding:.65rem .8rem;background:var(--slate-l);font-size:.8rem}
+.advanced-block[open] summary{border-bottom:1px solid var(--border)}
+.advanced-block .table-wrap{border:0;border-radius:0}
+.card-details{margin-top:.65rem;border-top:1px solid var(--border);padding-top:.55rem}
+.card-details summary{cursor:pointer;font-size:.75rem;font-weight:900;color:var(--teal2)}
+.card-details .detail-grid{margin-top:.55rem}
+.feedback-link{display:inline-flex;align-items:center;border:1px solid var(--border2);border-radius:var(--pill);padding:4px 9px;margin-top:.45rem;color:var(--teal2);font-size:.72rem;font-weight:900;text-decoration:none;background:white}
+.feedback-link:hover{border-color:var(--teal);color:var(--teal)}
+.filter-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.6rem;margin:.8rem 0 1rem;background:var(--slate-l);border:1px solid var(--border);border-radius:var(--r);padding:.75rem}
+.filter-field{display:flex;flex-direction:column;gap:.25rem}
+.filter-field label{font-size:.62rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--ink4)}
+.filter-field select{border:1px solid var(--border2);border-radius:8px;background:white;color:var(--ink);padding:.45rem .6rem;font-size:.82rem;outline:none}
+.lane-block{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:.7rem;background:white}
+.lane-hdr{display:flex;align-items:center;justify-content:space-between;gap:.5rem;background:var(--slate-l);padding:.55rem .75rem;border-bottom:1px solid var(--border)}
+.lane-title{font-size:.8rem;font-weight:900;color:var(--ink)}
+.lane-copy{font-size:.73rem;color:var(--ink3)}
+.lane-body{padding:.65rem}
+.result-note{font-size:.76rem;color:var(--ink3);background:var(--slate-l);border:1px solid var(--border);border-radius:9px;padding:.55rem .7rem;margin:.55rem 0}
+.agency-grid,.glossary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.75rem}
+.agency-card,.glossary-card{background:white;border:1px solid var(--border);border-radius:var(--r);padding:.85rem;box-shadow:var(--sh)}
+.agency-card h3,.glossary-card h3{font-size:.95rem;font-weight:900;color:var(--ink);margin-bottom:.25rem}
+.agency-card p,.glossary-card p{font-size:.8rem;color:var(--ink3);line-height:1.5}
+.agency-card .detail-grid{margin-top:.65rem}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="site-hdr">
+  <div class="hdr-inner">
+    <div class="hdr-top">
+      <div class="hdr-brand">
+        <div class="hdr-mark">WM</div>
+        <div>
+          <div class="hdr-wordmark">ACOE <span>WorkMap</span></div>
+          <div class="hdr-sub">Staff, funding, program, and site overlap connector</div>
+        </div>
+      </div>
+      <div class="hdr-badge">Internal Prototype</div>
+    </div>
+    <div class="hdr-tagline">
+      <span>Find where ACOE work crosses over, why it connects, and who should be looped in.</span>
+      <a class="hdr-mini-btn" href="mailto:gbrown@acoe.org?subject=ACOE%20WorkMap%20pilot%20feedback">Send Pilot Feedback</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="portal-nav">
+    <button class="portal-btn active" id="pbtn-home" onclick="showPortal('home')">Start</button>
+    <button class="portal-btn" id="pbtn-overlap" onclick="showPortal('overlap')">Find Contact</button>
+    <button class="portal-btn" id="pbtn-grants" onclick="showPortal('grants')">Funding & Grants</button>
+    <button class="portal-btn" id="pbtn-agencies" onclick="showPortal('agencies')">Partner Agencies</button>
+    <button class="portal-btn" id="pbtn-glossary" onclick="showPortal('glossary')">Glossary</button>
+  </div>
+
+  <section class="panel" id="portal-home">
+    <div class="home-hero">
+      <h2>Start with where your work sits.</h2>
+      <p>Choose a work area. WorkMap shows who overlaps, what funding connects, and why.</p>
+    </div>
+
+    <div class="callout" style="margin-bottom:1rem">
+      <h4>Pilot review version</h4>
+      <p>Use this to review overlap. It is not an official referral system yet.</p>
+    </div>
+
+    <div class="click-guide">
+      <button onclick="scrollToWorkAreas()">
+        <div class="click-guide-k">I know my area</div>
+        <div class="click-guide-v">Explore my work area</div>
+      </button>
+      <button onclick="showPortal('overlap')">
+        <div class="click-guide-k">I need a person</div>
+        <div class="click-guide-v">Find a starting contact</div>
+      </button>
+      <button onclick="showPortal('grants')">
+        <div class="click-guide-k">I want funding</div>
+        <div class="click-guide-v">Open Funding & Grants</div>
+      </button>
+      <button onclick="showPortal('agencies')">
+        <div class="click-guide-k">I want partners</div>
+        <div class="click-guide-v">Open Partner Agencies</div>
+      </button>
+    </div>
+
+    <div class="home-actions">
+      <button class="home-action primary" onclick="scrollToWorkAreas()">
+        <div class="home-action-kicker">Start here</div>
+        <div class="home-action-title">Explore my work area</div>
+        <div class="home-action-copy">Choose the area closest to your work. WorkMap shows the top people, funding, agencies, and sites that overlap.</div>
+      </button>
+      <button class="home-action" onclick="showPortal('overlap')">
+        <div class="home-action-kicker">Need a person</div>
+        <div class="home-action-title">Find a starting point</div>
+        <div class="home-action-copy">Use the guided flow when you know the issue and need a suggested contact plus related stakeholders.</div>
+      </button>
+      <button class="home-action" onclick="showPortal('grants')">
+        <div class="home-action-kicker">Funding view</div>
+        <div class="home-action-title">Look up funding & grants</div>
+        <div class="home-action-copy">See ACOE and partner funding records, sources, signals, and mapped overlap.</div>
+      </button>
+      <button class="home-action" onclick="showPortal('agencies')">
+        <div class="home-action-kicker">Partner view</div>
+        <div class="home-action-title">Browse partner agencies</div>
+        <div class="home-action-copy">See outside agency records and the possible ACOE liaison for each partner connection.</div>
+      </button>
+    </div>
+
+    <div class="callout" style="margin-bottom:1rem">
+      <h4>How to read it</h4>
+      <div class="quick-guide">
+        <span class="guide-pill"><strong>First place to start</strong> = suggested starting point</span>
+        <span class="guide-pill"><strong>Loop in</strong> = keep aware</span>
+        <span class="guide-pill"><strong>Related work</strong> = shared signals</span>
+      </div>
+    </div>
+
+    <details class="advanced-block" style="margin-bottom:1rem">
+      <summary>Advanced data views</summary>
+      <div class="lane-body">
+        <div class="quick-guide">
+          <button class="btn-sec" onclick="showPortal('staff')">People Map</button>
+          <button class="btn-sec" onclick="showPortal('programs')">Programs / Sites Map</button>
+          <button class="btn-sec" onclick="showData()">Pilot Data Table</button>
+        </div>
+      </div>
+    </details>
+
+    <div id="work-area-start">
+      <div class="results-header">
+        <h3>Choose your work area</h3>
+        <div class="results-count" id="work-area-count">0 areas</div>
+      </div>
+      <div class="work-search">
+        <input id="work-search" placeholder="Search work areas, funding, sites, or deliverables..." oninput="renderHomeWorkAreas()">
+      </div>
+      <div class="work-grid" id="work-area-grid"></div>
+    </div>
+  </section>
+
+  <div class="steps-bar hidden" id="steps-bar">
+    <div class="step"><div class="step-n active" id="sn1">1</div><div class="step-label active" id="sl1">Scope</div></div>
+    <div class="step-line" id="line1"></div>
+    <div class="step"><div class="step-n todo" id="sn2">2</div><div class="step-label" id="sl2">Signals</div></div>
+    <div class="step-line" id="line2"></div>
+    <div class="step"><div class="step-n todo" id="sn3">3</div><div class="step-label" id="sl3">Overlap</div></div>
+    <div class="step-line" id="line3"></div>
+    <div class="step"><div class="step-n todo" id="sn4">4</div><div class="step-label" id="sl4">Email</div></div>
+  </div>
+
+  <section class="panel hidden" id="step1">
+    <div class="panel-hdr">
+      <h2>What work are you trying to connect?</h2>
+      <p>Add only what you know. The next step helps narrow the overlap.</p>
+    </div>
+
+    <div class="split">
+      <div class="field-grid">
+        <div class="fld">
+          <label>Requester Name</label>
+          <input id="requester-name" placeholder="Your name">
+        </div>
+        <div class="fld">
+          <label>Requester Email</label>
+          <input id="requester-email" type="email" placeholder="you@acoe.org">
+        </div>
+        <div class="fld">
+          <label>Primary Site</label>
+          <select id="scope-site">
+            <option value="">Select a site...</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>Need Level</label>
+          <select id="scope-urgency">
+            <option value="routine">Routine - alignment or planning</option>
+            <option value="elevated">Elevated - active need this week</option>
+            <option value="urgent">Urgent - high need / immediate outreach</option>
+          </select>
+        </div>
+        <div class="fld field-full">
+          <label>Context</label>
+          <textarea id="scope-context" placeholder="Example: We need to coordinate services at the Transition Center for justice-involved youth and understand which funding deliverables overlap with re-entry support."></textarea>
+        </div>
+      </div>
+
+      <aside class="callout">
+        <h4>What this does</h4>
+        <p>WorkMap compares the work area, population, deliverables, sites, and funding you select.</p>
+        <div class="callout-list">
+          <div class="callout-item"><strong>First place to start:</strong> strongest mapped overlap.</div>
+          <div class="callout-item"><strong>Loop in:</strong> meaningful related work.</div>
+          <div class="callout-item"><strong>Why:</strong> shows the matched signals.</div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-sec" onclick="loadExample()">Load Example</button>
+      <button class="nav-btn" onclick="goStep(2)">Choose Overlap Signals</button>
+    </div>
+  </section>
+
+  <section class="panel hidden" id="step2">
+    <div class="panel-hdr">
+      <h2>Select overlap signals</h2>
+      <p>Select only what applies. Fewer accurate signals are better than many guesses.</p>
+    </div>
+
+    <div id="signal-groups"></div>
+
+    <div class="selected-summary" id="selected-summary">
+      <strong>Selected signals:</strong>
+      <div class="summary-tags" id="summary-tags"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="back-btn" onclick="goStep(1)">Back</button>
+      <button class="nav-btn" onclick="findOverlap()">Find Work Overlap</button>
+    </div>
+  </section>
+
+  <section class="panel hidden" id="step3">
+    <div class="results-header">
+      <h3>WorkMap results</h3>
+      <div class="results-count" id="results-count">0 matches</div>
+    </div>
+
+    <div id="route-preview"></div>
+
+    <div class="quick-guide">
+      <span class="guide-pill"><strong>First place to start</strong> = suggested starting point</span>
+      <span class="guide-pill"><strong>Loop in</strong> = likely stakeholder</span>
+          <span class="guide-pill"><strong>Related funding</strong> = grant or partner work connection</span>
+    </div>
+
+    <div class="grid-two">
+      <div>
+        <div class="results-header">
+          <h3>Top staff matches</h3>
+        </div>
+        <div id="staff-cards"></div>
+      </div>
+      <div>
+        <div class="results-header">
+          <h3>Top funding matches</h3>
+        </div>
+        <div id="grant-cards"></div>
+      </div>
+    </div>
+
+    <details class="advanced-block">
+      <summary>Show detailed staff table</summary>
+      <div class="table-wrap" id="staff-table"></div>
+    </details>
+
+    <details class="advanced-block">
+      <summary>Show detailed funding table</summary>
+      <div class="table-wrap" id="grant-table"></div>
+    </details>
+
+    <div class="btn-row">
+      <button class="back-btn" onclick="goStep(2)">Adjust Signals</button>
+      <button class="nav-btn" onclick="goStep(4)">Draft Outreach</button>
+    </div>
+  </section>
+
+  <section class="panel hidden" id="step4">
+    <div class="panel-hdr">
+      <h2>Draft outreach</h2>
+      <p>This prototype creates a draft email to the suggested starting point and CCs related stakeholders. A production version would send through a backend service and keep an audit trail.</p>
+    </div>
+
+    <div id="route-final"></div>
+
+    <div class="request-box">
+      <h4>Message details</h4>
+      <div class="field-grid">
+        <div class="fld">
+          <label>Subject</label>
+          <input id="email-subject" value="ACOE WorkMap routing request">
+        </div>
+        <div class="fld">
+          <label>Need Level</label>
+          <input id="email-urgency" readonly>
+        </div>
+        <div class="fld field-full">
+          <label>Draft Message</label>
+          <textarea id="email-body" rows="8"></textarea>
+        </div>
+      </div>
+      <p class="notice">Prototype note: this opens your email client using a mailto link. It does not silently send mail or store the request yet.</p>
+    </div>
+
+    <div class="btn-row">
+      <button class="back-btn" onclick="goStep(3)">Back to Results</button>
+      <button class="btn-green" onclick="sendEmail()">Open Email Draft</button>
+    </div>
+  </section>
+
+  <section class="panel hidden" id="portal-grants">
+    <div class="panel-hdr">
+      <h2>Funding & Grants</h2>
+      <p>Current ACOE grant records plus partner agency funding/work records and mapped overlap.</p>
+    </div>
+    <div id="grant-portal-body"></div>
+  </section>
+
+  <section class="panel hidden" id="portal-staff">
+    <div class="panel-hdr">
+      <h2>People</h2>
+      <p>Current public ACOE staff contacts and mapped work areas.</p>
+    </div>
+    <div id="staff-portal-body"></div>
+  </section>
+
+  <section class="panel hidden" id="portal-programs">
+    <div class="panel-hdr">
+      <h2>Programs / Sites</h2>
+      <p>Which programs and locations have mapped staff or funding overlap.</p>
+    </div>
+    <div id="program-portal-body"></div>
+  </section>
+
+  <section class="panel hidden" id="portal-agencies">
+    <div class="panel-hdr">
+      <h2>Partner Agencies</h2>
+      <p>Outside agency records grouped by agency, possible ACOE liaison, and overlap signals.</p>
+    </div>
+    <div id="agency-portal-body"></div>
+  </section>
+
+  <section class="panel hidden" id="portal-glossary">
+    <div class="panel-hdr">
+      <h2>Glossary</h2>
+      <p>Plain-language terms used in this pilot.</p>
+    </div>
+    <div id="glossary-portal-body"></div>
+  </section>
+
+  <section class="panel hidden" id="portal-admin">
+    <div class="panel-hdr">
+      <h2>Admin / Sources</h2>
+      <p>Pilot data manager. In production, this becomes the authenticated admin area for maintaining funding, staff, programs, sites, deliverables, and routing rules.</p>
+    </div>
+    <div id="admin-portal-body"></div>
+  </section>
+
+  <section class="panel hidden" id="data-view">
+    <div class="panel-hdr">
+      <h2>Pilot data model</h2>
+      <p>This is the funding, staff, program, site, and routing data powering the prototype. Real implementation would replace this with a shared database or trusted data source.</p>
+    </div>
+    <div class="table-wrap" id="data-table"></div>
+    <div class="btn-row">
+      <button class="back-btn" onclick="hideData()">Close Data View</button>
+    </div>
+  </section>
+</div>
+
+<script>
+const DATA = {
+  sites: [
+    'Countywide',
+    '18 Alameda County districts and charters',
+    'Oakland Community School',
+    'Hayward Community School',
+    'Burke Academy',
+    'Carolyn Hobbs Academy',
+    'JJC / Transition Center',
+    'Opportunity Academy',
+    'Early Learning Providers',
+    'Expanded Learning Programs',
+    'Alameda County partner agencies',
+    'Family Resource Centers',
+    'Food distribution partners',
+    'Juvenile Justice Center',
+    'Unhoused service sites'
+  ],
+  signals: [
+    {
+      title: 'Need Categories',
+      key: 'needs',
+      items: [
+        ['attendance','Attendance and re-engagement'],
+        ['basic-needs','Basic needs and barrier removal'],
+        ['behavioral-health-systems','Behavioral health systems'],
+        ['career','Career pathway / CTE'],
+        ['civic-learning','Civic engagement / service learning'],
+        ['community-schools','Community schools implementation'],
+        ['credits','Credit recovery / diploma completion'],
+        ['early-learning','Early learning and preschool quality'],
+        ['ell','English learner and family access'],
+        ['expanded-learning','Expanded learning / after school'],
+        ['family-support','Family support and navigation'],
+        ['food-security','Food security'],
+        ['homelessness','Housing / homelessness'],
+        ['juvenile-justice','Juvenile justice'],
+        ['mental-health','Mental health and wellness'],
+        ['reentry','JJC return / re-entry'],
+        ['school-climate','School climate and non-punitive supports'],
+        ['sped','Special education coordination'],
+        ['substance-use','Substance use support'],
+        ['teacher-workforce','Teacher workforce diversity']
+      ]
+    },
+    {
+      title: 'Target Populations',
+      key: 'targets',
+      items: [
+        ['adult-learners','Adult learners'],
+        ['behavioral-health-clients','Behavioral health clients'],
+        ['calworks-families','CalWORKs families'],
+        ['children-youth','Children and youth'],
+        ['community-school-grantees','Community school grantees'],
+        ['credit-deficient','Credit deficient youth'],
+        ['early-learners','Early learners'],
+        ['english-learners','English learners'],
+        ['families-with-young-children','Families with young children'],
+        ['food-insecure-households','Food insecure households'],
+        ['foster-youth','Foster youth'],
+        ['housing-insecure','Housing insecure youth'],
+        ['justice-involved','Justice-involved youth'],
+        ['low-income-children','Low-income children'],
+        ['parenting-teens','Pregnant or parenting teens'],
+        ['students-with-disabilities','Children / students with disabilities'],
+        ['students-with-ieps','Students with IEPs'],
+        ['teachers-candidates','Teacher candidates / workforce']
+      ]
+    },
+    {
+      title: 'Deliverables',
+      key: 'deliverables',
+      items: [
+        ['annual-report','Annual grant report'],
+        ['assets-needs-map','Assets and needs mapping'],
+        ['barrier-removal','Barrier removal documentation'],
+        ['behavioral-health-housing','Behavioral health housing supports'],
+        ['calfresh-outreach','CalFresh outreach / application support'],
+        ['caregiver-grants','Caregiver grants / stipends'],
+        ['case-conference','Cross-team case conference'],
+        ['childcare-subsidies','Child care subsidies / access'],
+        ['coaching-ta','Coaching / technical assistance'],
+        ['data-sharing','Data sharing and continuous improvement'],
+        ['employer-partnership','Employer partnership tracking'],
+        ['family-engagement','Family engagement contacts'],
+        ['family-navigation','Family navigation'],
+        ['food-distribution','Food distribution'],
+        ['full-service-partnership','Full Service Partnership support'],
+        ['housing-navigation','Housing navigation'],
+        ['inclusive-classrooms','Inclusive early learning classrooms'],
+        ['intervention-minutes','Intervention minutes / progress'],
+        ['partnership-development','Partnership development'],
+        ['pathway-enrollment','Pathway enrollment'],
+        ['prepared-meals','Prepared meals'],
+        ['program-quality','Program quality improvement'],
+        ['rapid-enrollment','Rapid enrollment / records transfer'],
+        ['rental-assistance','Rental / deposit assistance'],
+        ['service-learning','Service-learning implementation'],
+        ['steam-enrichment','STEAM enrichment']
+      ]
+    },
+    {
+      title: 'Programs',
+      key: 'programs',
+      items: [
+        ['attendance-team','Attendance and Re-Engagement Team'],
+        ['behavioral-health','Behavioral Health and Wellness'],
+        ['acbh-behavioral-health','Partner: Alameda County Behavioral Health'],
+        ['acssa-calworks-housing','Partner: ACSSA CalWORKs Housing'],
+        ['accfb-food-access','Partner: ACCFB Food Access'],
+        ['accfb-prepared-meals','Partner: ACCFB Prepared Meals'],
+        ['alameda-probation-juvenile','Partner: Alameda County Probation'],
+        ['california-serves','California Serves / Civic Engagement'],
+        ['career-pathways','Career Pathways and CTE'],
+        ['charter-support','Charter School Support'],
+        ['community-schools-county','Countywide Community Schools Coordination'],
+        ['early-learning-inclusion','Early Learning Inclusion'],
+        ['ell-family','EL and Family Engagement'],
+        ['expanded-learning-systems','Expanded Learning Systems of Support'],
+        ['first5-measure-c','Partner: First 5 Measure C'],
+        ['first5-neighborhoods-ready','Partner: First 5 Neighborhoods Ready'],
+        ['foster-homeless','Foster Youth / Homeless Services'],
+        ['opportunity-adult','Opportunity Academy / Adult Ed'],
+        ['qris-quality-counts','Quality Counts / QRIS'],
+        ['school-climate-lcssp','School Climate / LCSSP'],
+        ['special-education','Special Education Supports'],
+        ['teacher-workforce','Teacher Workforce Diversity'],
+        ['transition-reentry','Transition and Re-Entry Supports']
+      ]
+    },
+    {
+      title: 'Funding Records',
+      key: 'grants',
+      items: [
+        ['ccspp-county-coordination','CCSPP County Coordination Grant'],
+        ['ieeep-2024-27','Inclusive Early Education Expansion Program 2024-27'],
+        ['cclc-ssel-2025','21st CCLC System of Support for Expanded Learning'],
+        ['cclc-steam-2025','21st CCLC STEAM'],
+        ['ases-steam-2025','ASES STEAM'],
+        ['partner-probation-jjcpa-yobg-2026','Partner: Probation JJCPA/YOBG 2026 Draft'],
+        ['partner-acbh-bhsa-fsp-housing-2026','Partner: ACBH BHSA FSP/Housing'],
+        ['partner-first5-measure-c-2025-30','Partner: First 5 Measure C'],
+        ['partner-first5-frc-shelter-2026','Partner: First 5 FRC/Shelter Grants'],
+        ['partner-first5-neighborhoods-ready','Partner: First 5 Neighborhoods Ready'],
+        ['partner-acssa-calworks-housing','Partner: ACSSA CalWORKs Housing'],
+        ['partner-accfb-prepared-meals-2025','Partner: ACCFB Prepared Meals'],
+        ['partner-accfb-calfresh-outreach','Partner: ACCFB CalFresh Outreach']
+      ]
+    },
+    {
+      title: 'Staff Roles',
+      key: 'roles',
+      items: [
+        ['case-manager','Case Manager'],
+        ['compliance-lead','Compliance Lead'],
+        ['data-lead','Data / Evaluation Lead'],
+        ['director','Director / Executive Director'],
+        ['executive-sponsor','Executive Sponsor'],
+        ['grant-lead','Grant Lead'],
+        ['program-lead','Program Lead'],
+        ['site-liaison','Site Liaison'],
+        ['specialist','Specialist'],
+        ['technical-assistance','Technical Assistance Provider']
+      ]
+    }
+  ],
+  staff: [
+    {
+      id:'nicole-pierce-davis',
+      name:'Dr. Nicole Pierce-Davis',
+      role:'Chief of Whole Child Programs',
+      roleKey:'executive-sponsor',
+      email:'npierce@acoe.org',
+      phone:'(510) 670-7793',
+      programs:['community-schools-county','expanded-learning-systems','early-learning-inclusion','qris-quality-counts','special-education','california-serves'],
+      grants:[],
+      oversightGrants:['ccspp-county-coordination','ieeep-2024-27','cspp-qris','california-serves-grant'],
+      sites:['Countywide','18 Alameda County districts and charters'],
+      needs:['community-schools','early-learning','expanded-learning','sped','civic-learning'],
+      targets:['community-school-grantees','early-learners','students-with-disabilities','low-income-children','english-learners'],
+      deliverables:['coaching-ta','partnership-development','program-quality'],
+      priority:2,
+      primaryRoute:false,
+      sourceName:'ACOE Whole Child Programs',
+      sourceUrl:'https://acoe.org/wholechild',
+      validation:'Executive sponsor mapped from public Whole Child page; validate internal grant ownership before production routing.',
+      note:'Executive sponsor for Whole Child overlaps; use as reference or CC, not the first operational starting point in this pilot.'
+    },
+    {
+      id:'dennis-guikema',
+      name:'Dennis Guikema',
+      role:'Director, Community Schools',
+      roleKey:'director',
+      email:'dguikema@acoe.org',
+      phone:'(510) 670-4599',
+      programs:['community-schools-county'],
+      grants:['ccspp-county-coordination'],
+      sites:['Countywide','18 Alameda County districts and charters'],
+      needs:['community-schools','attendance','basic-needs','mental-health'],
+      targets:['community-school-grantees','foster-youth','housing-insecure','english-learners'],
+      deliverables:['coaching-ta','assets-needs-map','partnership-development','data-sharing','annual-report'],
+      priority:5,
+      sourceName:'ACOE Countywide Community Schools & Partnerships',
+      sourceUrl:'https://www.acoe.org/153602_3',
+      validation:'Current org chart lists Dennis Guikema as Director under Community Schools; public contact page describes the countywide Community Schools and Partnerships scope.',
+      note:'Best first starting point for countywide community schools coordination, LEA support, and implementation overlap.'
+    },
+    {
+      id:'rachel-cobb',
+      name:'Dr. Rachel Cobb',
+      role:'Program Director, Community Schools',
+      roleKey:'program-lead',
+      email:'rcobb@acoe.org',
+      phone:'(510) 670-4532',
+      programs:['community-schools-county'],
+      grants:['ccspp-county-coordination'],
+      sites:['Countywide','18 Alameda County districts and charters'],
+      needs:['community-schools','attendance','basic-needs','mental-health'],
+      targets:['community-school-grantees','foster-youth','housing-insecure','english-learners'],
+      deliverables:['coaching-ta','assets-needs-map','partnership-development','data-sharing'],
+      priority:4,
+      sourceName:'ACOE Countywide Community Schools & Partnerships',
+      sourceUrl:'https://www.acoe.org/153602_3',
+      validation:'Current org chart lists Dr. Rachel Cobb as Program Director.',
+      note:'Use as a starting point when countywide community school coaching, partner coordination, or implementation support is the center of the request.'
+    },
+    {
+      id:'gregory-brown',
+      name:'Gregory Brown',
+      role:'Program Manager, Community Schools',
+      roleKey:'program-lead',
+      email:'gbrown@acoe.org',
+      phone:'(510) 670-4533',
+      programs:['community-schools-county'],
+      grants:['ccspp-county-coordination'],
+      sites:['Countywide','18 Alameda County districts and charters'],
+      needs:['community-schools','attendance','basic-needs','mental-health'],
+      targets:['community-school-grantees','foster-youth','housing-insecure','english-learners'],
+      deliverables:['coaching-ta','assets-needs-map','partnership-development','data-sharing'],
+      priority:4,
+      sourceName:'ACOE Countywide Community Schools & Partnerships',
+      sourceUrl:'https://www.acoe.org/153602_3',
+      validation:'Current org chart lists Gregory Brown as Program Manager under Community Schools.',
+      note:'Use as a starting point when the request is about community school implementation details, assets/needs mapping, or partner coordination.'
+    },
+    {
+      id:'akilah-byrd',
+      name:'Akilah Byrd',
+      role:'Director, Expanded Learning Programs',
+      roleKey:'director',
+      email:'abyrd@acoe.org',
+      phone:'(510) 670-4139',
+      programs:['expanded-learning-systems'],
+      grants:[],
+      oversightGrants:['cclc-ssel-2025','elop-ssel-2022','ases-ssel-2024','cclc-steam-2025','ases-steam-2025'],
+      sites:['Countywide','Expanded Learning Programs','Region IV'],
+      needs:['expanded-learning','career','community-schools'],
+      targets:['low-income-children','english-learners','community-school-grantees'],
+      deliverables:['coaching-ta','program-quality','partnership-development','annual-report'],
+      priority:5,
+      sourceName:'ACOE Region 4 Expanded Learning',
+      sourceUrl:'https://www.acoe.org/region4',
+      validation:'Public page confirms director role; direct grant routing should point to the program director by grant type.',
+      note:'Best broad starting point when the request is generally about Region IV expanded learning systems of support.'
+    },
+    {
+      id:'shamia-sandles',
+      name:'Shamia Sandles',
+      role:'Program Director, Expanded Learning',
+      roleKey:'program-lead',
+      email:'shamias@acoe.org',
+      phone:'(510) 670-4143',
+      programs:['expanded-learning-systems'],
+      grants:['cclc-ssel-2025','ases-ssel-2024'],
+      sites:['Countywide','Expanded Learning Programs','Region IV'],
+      needs:['expanded-learning','community-schools'],
+      targets:['low-income-children','english-learners','community-school-grantees'],
+      deliverables:['coaching-ta','program-quality','annual-report'],
+      priority:4,
+      sourceName:'ACOE Region 4 Expanded Learning',
+      sourceUrl:'https://www.acoe.org/region4',
+      validation:'Current org chart lists Shamia Sandles as Program Director, Expanded Learning. Validate ASES/21st CCLC grant ownership internally.',
+      note:'Use as a starting point when the overlap is ASES, 21st CCLC, expanded learning quality, or program technical assistance.'
+    },
+    {
+      id:'lorena-morales-ellis',
+      name:'Lorena Morales-Ellis',
+      role:'Program Director, Expanded Learning',
+      roleKey:'program-lead',
+      email:'lmoralesellis@acoe.org',
+      phone:'(510) 670-4285',
+      programs:['expanded-learning-systems'],
+      grants:['elop-ssel-2022'],
+      sites:['Countywide','Expanded Learning Programs','Region IV'],
+      needs:['expanded-learning','community-schools'],
+      targets:['low-income-children','english-learners','community-school-grantees'],
+      deliverables:['coaching-ta','program-quality','partnership-development','annual-report'],
+      priority:4,
+      sourceName:'ACOE Region 4 Expanded Learning',
+      sourceUrl:'https://www.acoe.org/region4',
+      validation:'Current org chart lists Lorena Morales-Ellis as Program Director, Expanded Learning. Validate ELO Programs grant ownership internally.',
+      note:'Use as a starting point when the work touches ELO-P technical assistance, system support, or expanded learning program quality.'
+    },
+    {
+      id:'monica-dennis',
+      name:'Monica Dennis',
+      role:'Program Director, Expanded Learning STEAM Hub',
+      roleKey:'program-lead',
+      email:'mdennis@acoe.org',
+      phone:'(510) 670-4148',
+      programs:['expanded-learning-systems','career-pathways'],
+      grants:['cclc-steam-2025','ases-steam-2025'],
+      sites:['Expanded Learning Programs','Region IV'],
+      needs:['expanded-learning','career'],
+      targets:['low-income-children','english-learners'],
+      deliverables:['steam-enrichment','program-quality','annual-report'],
+      priority:4,
+      sourceName:'ACOE Region 4 Expanded Learning',
+      sourceUrl:'https://www.acoe.org/region4',
+      validation:'Current org chart lists Monica Dennis as Program Director, Expanded Learning STEAM Hub. Validate grant-specific ownership internally.',
+      note:'Use as a starting point when after-school STEAM enrichment or STEAM Hub work overlaps with expanded learning grant requirements.'
+    },
+    {
+      id:'maria-sujo',
+      name:'Maria Sujo',
+      role:'Director, Early Learning',
+      roleKey:'director',
+      email:'msujo@acoe.org',
+      phone:'(510) 670-7714',
+      programs:['early-learning-inclusion','qris-quality-counts'],
+      grants:[],
+      oversightGrants:['ieeep-2024-27','cspp-qris'],
+      sites:['Countywide','Early Learning Providers'],
+      needs:['early-learning','sped','ell'],
+      targets:['early-learners','students-with-disabilities','low-income-children','english-learners'],
+      deliverables:['inclusive-classrooms','program-quality','coaching-ta','annual-report'],
+      priority:5,
+      sourceName:'ACOE Early Learning',
+      sourceUrl:'https://acoe.org/earlylearning',
+      validation:'Public page confirms Early Learning director role; direct grant owner should be validated internally.',
+      note:'Best broad starting point for early learning, preschool quality, inclusion, QRIS, and countywide early learning systems.'
+    },
+    {
+      id:'my-nguyen-soy',
+      name:'My Nguyen-Soy',
+      role:'Program Director, Early Learning',
+      roleKey:'program-lead',
+      email:'mnguyensoy@acoe.org',
+      phone:'(510) 670-4190',
+      programs:['early-learning-inclusion','qris-quality-counts'],
+      grants:['ieeep-2024-27','cspp-qris'],
+      sites:['Countywide','Early Learning Providers'],
+      needs:['early-learning','sped','ell'],
+      targets:['early-learners','students-with-disabilities','low-income-children','english-learners'],
+      deliverables:['inclusive-classrooms','program-quality','coaching-ta','annual-report'],
+      priority:4,
+      sourceName:'ACOE Early Learning',
+      sourceUrl:'https://acoe.org/earlylearning',
+      validation:'Public page confirms Early Learning program director role; validate grant-specific workflow internally.',
+      note:'Use as a starting point when the request is about P-3 alignment, early learning program implementation, or cross-system coordination.'
+    },
+    {
+      id:'crystal-turner',
+      name:'Crystal Turner',
+      role:'Program Manager, Early Learning',
+      roleKey:'program-lead',
+      email:'cturner@acoe.org',
+      phone:'(510) 670-4238',
+      programs:['early-learning-inclusion','qris-quality-counts'],
+      grants:['ieeep-2024-27','cspp-qris'],
+      sites:['Countywide','Early Learning Providers'],
+      needs:['early-learning','sped'],
+      targets:['early-learners','students-with-disabilities','low-income-children'],
+      deliverables:['inclusive-classrooms','program-quality','coaching-ta','annual-report'],
+      priority:4,
+      sourceName:'ACOE Early Learning',
+      sourceUrl:'https://acoe.org/earlylearning',
+      validation:'Public page confirms Early Learning program manager role; validate grant-specific workflow internally.',
+      note:'Use as a starting point when the work touches early learning quality improvement, provider support, IEEEP, or QRIS implementation details.'
+    },
+    {
+      id:'lucero-irizarry',
+      name:'Lucero Irizarry',
+      role:'Program Manager, Early Learning Local Planning Council',
+      roleKey:'program-lead',
+      email:'lirizarry@acoe.org',
+      phone:'(510) 670-4594',
+      programs:['qris-quality-counts','early-learning-inclusion'],
+      grants:['cspp-qris'],
+      sites:['Countywide','Early Learning Providers'],
+      needs:['early-learning','ell'],
+      targets:['early-learners','low-income-children','english-learners'],
+      deliverables:['program-quality','partnership-development','annual-report'],
+      priority:4,
+      sourceName:'ACOE Early Learning',
+      sourceUrl:'https://acoe.org/earlylearning',
+      validation:'Current org chart lists Lucero Irizarry as Program Manager, Early Learning Local Planning Council. Validate QRIS and LPC workflow internally.',
+      note:'Use as a starting point when QRIS, Local Planning Council, early care access, or provider coordination overlaps with the request.'
+    },
+    {
+      id:'olivia-rangel',
+      name:'Olivia Rangel',
+      role:'Executive Director, Special Education Innovation',
+      roleKey:'director',
+      email:'orangel@acoe.org',
+      phone:'(510) 670-1807',
+      programs:['special-education','early-learning-inclusion'],
+      grants:['ieeep-2024-27'],
+      sites:['Countywide','Early Learning Providers','18 Alameda County districts and charters'],
+      needs:['sped','early-learning'],
+      targets:['students-with-disabilities','early-learners'],
+      deliverables:['inclusive-classrooms','coaching-ta','program-quality'],
+      priority:5,
+      sourceName:'ACOE Whole Child Programs',
+      sourceUrl:'https://acoe.org/wholechild',
+      validation:'Public page confirms Special Education Innovation role; validate IEEEP ownership and referral workflow internally.',
+      note:'Best starting point when inclusive early education overlaps with disability access, special education innovation, or inclusion supports.'
+    },
+    {
+      id:'miriam-vasquez',
+      name:'Miriam Vasquez',
+      role:'Executive Director, Student Welfare and Attendance',
+      roleKey:'director',
+      email:'mvasquez@acoe.org',
+      phone:'(510) 670-4543',
+      programs:['school-climate-lcssp','attendance-team','foster-homeless'],
+      grants:['lcssp-cohort6'],
+      sites:['Countywide','Oakland Community School','Hayward Community School','JJC / Transition Center'],
+      needs:['school-climate','attendance','mental-health','reentry','basic-needs'],
+      targets:['justice-involved','foster-youth','housing-insecure','credit-deficient'],
+      deliverables:['case-conference','family-engagement','annual-report','barrier-removal','rapid-enrollment'],
+      priority:4,
+      sourceName:'ACOE Student Attendance Support',
+      sourceUrl:'https://www.acoe.org/34583_3',
+      validation:'Public page confirms Student Welfare and Attendance role; exact LCSSP grant owner needs internal validation.',
+      note:'Use as a starting point when non-punitive school climate, attendance, foster/homeless support, and re-engagement overlap.'
+    },
+    {
+      id:'bernard-phelan',
+      name:'Bernard Phelan',
+      role:'Program Director, Arts Education',
+      roleKey:'program-lead',
+      email:'bphelan@acoe.org',
+      phone:'(510) 670-4214',
+      programs:['california-serves','career-pathways'],
+      grants:['california-serves-grant'],
+      sites:['Countywide','Oakland Community School','Hayward Community School'],
+      needs:['civic-learning','career','community-schools'],
+      targets:['credit-deficient','justice-involved','english-learners'],
+      deliverables:['service-learning','family-engagement','annual-report','pathway-enrollment'],
+      priority:5,
+      sourceName:'ACOE CLRP',
+      sourceUrl:'https://acoe.org/clrp',
+      validation:'Current org chart lists Bernard Phelan as Program Director, Arts Education. Exact California Serves grant owner needs internal validation.',
+      note:'Use as a starting point when service learning, civic engagement, arts education, student voice, or State Seal of Civic Engagement overlaps.'
+    },
+    {
+      id:'cristina-urbano',
+      name:'Cristina Urbano',
+      role:'Program Director, CLRP',
+      roleKey:'program-lead',
+      email:'curbano@acoe.org',
+      phone:'(510) 670-1821',
+      programs:['california-serves','ell-family'],
+      grants:[],
+      oversightGrants:['california-serves-grant'],
+      sites:['Countywide'],
+      needs:['civic-learning','ell'],
+      targets:['english-learners','credit-deficient'],
+      deliverables:['service-learning','family-engagement','coaching-ta'],
+      priority:3,
+      sourceName:'ACOE CLRP',
+      sourceUrl:'https://acoe.org/clrp',
+      validation:'Current org chart lists Cristina Urbano as Program Director, CLRP. Map as reference until grant owner is confirmed.',
+      note:'Reference starting point when civic learning intersects with multilingual learner or CLRP systems work.'
+    },
+    {
+      id:'lara-burenin',
+      name:'Lara Burenin',
+      role:'Program Director, CLRP',
+      roleKey:'program-lead',
+      email:'lburenin@acoe.org',
+      phone:'(510) 670-1845',
+      programs:['california-serves','ell-family'],
+      grants:[],
+      oversightGrants:['california-serves-grant'],
+      sites:['Countywide'],
+      needs:['civic-learning','ell'],
+      targets:['english-learners','credit-deficient'],
+      deliverables:['service-learning','family-engagement','coaching-ta'],
+      priority:3,
+      sourceName:'ACOE CLRP',
+      sourceUrl:'https://acoe.org/clrp',
+      validation:'Current org chart lists Lara Burenin as Program Director, CLRP. Map as reference until grant owner is confirmed.',
+      note:'Reference starting point when civic engagement intersects with language, literacy, or CLRP implementation.'
+    },
+    {
+      id:'sara-green',
+      name:'Sara Green',
+      role:'Program Director, CLRP',
+      roleKey:'program-lead',
+      email:'sgreen@acoe.org',
+      phone:'(510) 670-4174',
+      programs:['california-serves','career-pathways'],
+      grants:[],
+      oversightGrants:['california-serves-grant'],
+      sites:['Countywide'],
+      needs:['civic-learning','career'],
+      targets:['credit-deficient','english-learners'],
+      deliverables:['service-learning','coaching-ta','pathway-enrollment'],
+      priority:3,
+      sourceName:'ACOE CLRP',
+      sourceUrl:'https://acoe.org/clrp',
+      validation:'Current org chart lists Sara Green as Program Director, CLRP. Map as reference until grant owner is confirmed.',
+      note:'Reference starting point when civic engagement intersects with math, STEM, career, or CLRP systems work.'
+    },
+    {
+      id:'kristin-bijur',
+      name:'Kristin Bijur',
+      role:'Chief of Educator Effectiveness',
+      roleKey:'executive-sponsor',
+      email:'kbijur@acoe.org',
+      phone:'(510) 670-4201',
+      programs:['teacher-workforce'],
+      grants:[],
+      oversightGrants:['haas-teacher-workforce'],
+      sites:['Countywide','18 Alameda County districts and charters'],
+      needs:['teacher-workforce','community-schools'],
+      targets:['teachers-candidates'],
+      deliverables:['partnership-development','annual-report'],
+      priority:2,
+      primaryRoute:false,
+      sourceName:'ACOE PATH',
+      sourceUrl:'https://acoe.org/path',
+      validation:'Public PATH page confirms chief role; Haas grant is historical and should be validated before active routing.',
+      note:'Executive sponsor for educator pipeline and workforce overlap; use as reference unless leadership outreach is requested.'
+    },
+    {
+      id:'sarah-glasband',
+      name:'Sarah Glasband',
+      role:'Executive Director, Educator Development',
+      roleKey:'director',
+      email:'sglasband@acoe.org',
+      phone:'(510) 670-4559',
+      programs:['teacher-workforce'],
+      grants:['haas-teacher-workforce'],
+      sites:['Countywide','18 Alameda County districts and charters'],
+      needs:['teacher-workforce','community-schools'],
+      targets:['teachers-candidates'],
+      deliverables:['partnership-development','annual-report','coaching-ta'],
+      priority:5,
+      sourceName:'ACOE PATH',
+      sourceUrl:'https://acoe.org/path',
+      validation:'Public PATH page confirms educator development role; Haas grant is historical and should be validated before active routing.',
+      note:'Use as a starting point when teacher workforce diversity, educator pipeline, PATH, or countywide teacher development overlap.'
+    }
+  ],
+  grants: [
+    {
+      id:'ccspp-county-coordination',
+      name:'CCSPP County Coordination Grant',
+      funding:'Amount TBD - public guidance confirms ACOE county coordination role',
+      fiscalYear:'2024-25 guidance located',
+      status:'needs internal validation',
+      lastVerified:'2026-05-15',
+      verificationNote:'CDE current CCSPP page confirms COE county coordination funding for counties with two or more grantees; ACOE current Community Schools page confirms countywide support contacts. Confirm local grant owner and award amount internally.',
+      sourceName:'CDE CCSPP current page',
+      sourceUrl:'https://www.cde.ca.gov/ci/gs/hs/ccspp.asp',
+      allowables:['Countywide coordination','Direct support to LEAs','RTAC partnership','Community school coaching','Data-sharing and continuous improvement'],
+      targets:['community-school-grantees','foster-youth','housing-insecure','english-learners','justice-involved'],
+      deliverables:['coaching-ta','assets-needs-map','data-sharing','partnership-development','annual-report'],
+      sites:['Countywide','18 Alameda County districts and charters'],
+      programs:['community-schools-county'],
+      needs:['community-schools','attendance','basic-needs','mental-health','ell']
+    },
+    {
+      id:'ieeep-2024-27',
+      name:'Inclusive Early Education Expansion Program 2024-27',
+      funding:'$2,865,383 - proposed 2024-25 award',
+      fiscalYear:'2024-27',
+      status:'active period / needs owner validation',
+      lastVerified:'2026-05-15',
+      verificationNote:'Award period is 2024-27 and source remains valid for funding history. Confirm current ACOE grant owner and active deliverables internally.',
+      sourceName:'CDE funding results',
+      sourceUrl:'https://www.cde.ca.gov/fg/fo/r2/ieeepexpansionresult.asp',
+      allowables:['Inclusive early learning access','Support for children with disabilities','Program expansion','Early childhood inclusion capacity'],
+      targets:['early-learners','students-with-disabilities','low-income-children'],
+      deliverables:['inclusive-classrooms','program-quality','coaching-ta','annual-report'],
+      sites:['Early Learning Providers','Countywide'],
+      programs:['early-learning-inclusion','special-education'],
+      needs:['early-learning','sped']
+    },
+    {
+      id:'lcssp-cohort6',
+      name:'Learning Communities for School Success Program - Cohort 6',
+      funding:'$1,929,450 - proposed 2022-25 award',
+      fiscalYear:'2022-25',
+      status:'historical / needs current validation',
+      lastVerified:'2026-05-15',
+      verificationNote:'Public award period appears to have ended in 2025. Keep as historical unless ACOE confirms continuation, closeout work, or a related active grant.',
+      sourceName:'CDE funding results',
+      sourceUrl:'https://www.cde.ca.gov/fg/fo/r8/lcsspcohort622results.asp',
+      allowables:['Evidence-based non-punitive practices','School climate supports','Attendance improvement','Technical assistance and reporting'],
+      targets:['justice-involved','foster-youth','housing-insecure','credit-deficient'],
+      deliverables:['case-conference','family-engagement','annual-report','barrier-removal'],
+      sites:['Countywide','Oakland Community School','Hayward Community School','JJC / Transition Center'],
+      programs:['school-climate-lcssp','attendance-team','behavioral-health'],
+      needs:['school-climate','attendance','mental-health','reentry']
+    },
+    {
+      id:'california-serves-grant',
+      name:'California Serves Grant Program',
+      funding:'$335,840 - FY 2023-24 award',
+      fiscalYear:'2023-24',
+      status:'historical / needs current validation',
+      lastVerified:'2026-05-15',
+      verificationNote:'Public award is FY 2023-24. Keep as historical unless ACOE confirms active continuation or related current civic learning work.',
+      sourceName:'CDE funding results',
+      sourceUrl:'https://www.cde.ca.gov/fg/fo/r12/caserves24results.asp',
+      allowables:['Service-learning opportunities','Civic engagement','State Seal of Civic Engagement pathways','Student voice and leadership'],
+      targets:['credit-deficient','english-learners','justice-involved'],
+      deliverables:['service-learning','pathway-enrollment','family-engagement','annual-report'],
+      sites:['Countywide','Oakland Community School','Hayward Community School'],
+      programs:['california-serves','career-pathways'],
+      needs:['civic-learning','career','community-schools']
+    },
+    {
+      id:'cclc-ssel-2025',
+      name:'21st CCLC System of Support for Expanded Learning',
+      funding:'$418,572.18 - FY 2025-26 encumbrance',
+      fiscalYear:'2025-26',
+      status:'active period / needs owner validation',
+      lastVerified:'2026-05-15',
+      verificationNote:'FY 2025-26 funding record is current for the pilot period. Confirm ACOE grant owner and reporting route internally.',
+      sourceName:'CDE funding results',
+      sourceUrl:'https://www.cde.ca.gov/fg/fo/r27/ssel25results21st.asp',
+      allowables:['Expanded learning technical assistance','System of support activities','Program quality support','Regional coordination'],
+      targets:['low-income-children','english-learners','community-school-grantees'],
+      deliverables:['coaching-ta','program-quality','annual-report'],
+      sites:['Countywide','Expanded Learning Programs'],
+      programs:['expanded-learning-systems'],
+      needs:['expanded-learning','community-schools']
+    },
+    {
+      id:'elop-ssel-2022',
+      name:'Expanded Learning Opportunities Program TA for System of Support',
+      funding:'$453,079.21 - FY 2022-23 final award',
+      fiscalYear:'2022-23',
+      status:'historical / needs current validation',
+      lastVerified:'2026-05-15',
+      verificationNote:'Public record is FY 2022-23. Keep as historical unless ACOE confirms active continuation, closeout work, or a related current award.',
+      sourceName:'CDE funding results',
+      sourceUrl:'https://www.cde.ca.gov/fg/fo/r27/ssel22resultselop.asp',
+      allowables:['ELO-P technical assistance','System of Support for Expanded Learning','Regional coordination','Program quality support'],
+      targets:['low-income-children','english-learners','community-school-grantees'],
+      deliverables:['coaching-ta','program-quality','annual-report','partnership-development'],
+      sites:['Countywide','Expanded Learning Programs'],
+      programs:['expanded-learning-systems'],
+      needs:['expanded-learning','community-schools']
+    },
+    {
+      id:'ases-ssel-2024',
+      name:'ASES System of Support for Expanded Learning',
+      funding:'$136,528.89 - FY 2024-25 final award',
+      fiscalYear:'2024-25',
+      status:'recent historical / needs current validation',
+      lastVerified:'2026-05-15',
+      verificationNote:'FY 2024-25 award is no longer a current fiscal-year award as of May 2026. Confirm whether closeout or replacement funding remains active.',
+      sourceName:'CDE funding results',
+      sourceUrl:'https://www.cde.ca.gov/fg/fo/r27/ssel24resultsases.asp',
+      allowables:['ASES technical assistance','Expanded learning quality support','Regional system of support'],
+      targets:['low-income-children','english-learners'],
+      deliverables:['coaching-ta','program-quality','annual-report'],
+      sites:['Countywide','Expanded Learning Programs'],
+      programs:['expanded-learning-systems'],
+      needs:['expanded-learning']
+    },
+    {
+      id:'cclc-steam-2025',
+      name:'21st CCLC STEAM',
+      funding:'$80,500 - FY 2025-26 final award',
+      fiscalYear:'2025-26',
+      status:'active period / needs owner validation',
+      lastVerified:'2026-05-15',
+      verificationNote:'FY 2025-26 funding record is current for the pilot period. Confirm ACOE grant owner and reporting route internally.',
+      sourceName:'CDE funding results',
+      sourceUrl:'https://www.cde.ca.gov/fg/fo/r27/steam25results21st.asp',
+      allowables:['STEAM enrichment','After-school learning activities','Expanded learning program support'],
+      targets:['low-income-children','english-learners'],
+      deliverables:['steam-enrichment','program-quality','annual-report'],
+      sites:['Expanded Learning Programs'],
+      programs:['expanded-learning-systems'],
+      needs:['expanded-learning','career']
+    },
+    {
+      id:'ases-steam-2025',
+      name:'ASES STEAM',
+      funding:'$34,500 - FY 2025-26 final award',
+      fiscalYear:'2025-26',
+      status:'active period / needs owner validation',
+      lastVerified:'2026-05-15',
+      verificationNote:'FY 2025-26 funding record is current for the pilot period. Confirm ACOE grant owner and reporting route internally.',
+      sourceName:'CDE funding results',
+      sourceUrl:'https://www.cde.ca.gov/fg/fo/r27/steam25resultsases.asp',
+      allowables:['STEAM enrichment','ASES program support','After-school activities'],
+      targets:['low-income-children','english-learners'],
+      deliverables:['steam-enrichment','program-quality','annual-report'],
+      sites:['Expanded Learning Programs'],
+      programs:['expanded-learning-systems'],
+      needs:['expanded-learning','career']
+    },
+    {
+      id:'cspp-qris',
+      name:'CSPP QRIS Block Grant',
+      funding:'$2,152,432 - FY 2022-23 award',
+      fiscalYear:'2022-23',
+      status:'historical / needs current validation',
+      lastVerified:'2026-05-15',
+      verificationNote:'Public record is FY 2022-23. Keep as historical unless ACOE confirms active continuation, closeout work, or a related current QRIS funding stream.',
+      sourceName:'CDE funding results',
+      sourceUrl:'https://www.cde.ca.gov/fg/fo/r2/csppqrisresults22.asp',
+      allowables:['Quality rating and improvement system','CSPP quality improvement','Supports and incentives for program quality','Early learning quality monitoring'],
+      targets:['early-learners','low-income-children'],
+      deliverables:['program-quality','coaching-ta','annual-report'],
+      sites:['Early Learning Providers','Countywide'],
+      programs:['qris-quality-counts','early-learning-inclusion'],
+      needs:['early-learning']
+    },
+    {
+      id:'partner-probation-jjcpa-yobg-2026',
+      name:'Partner: Alameda County Probation JJCPA/YOBG 2026 Draft Plan',
+      agency:'Alameda County Probation Department',
+      funding:'Amount not loaded - 2026 JJCPA/YOBG draft plan located',
+      fiscalYear:'2026 annual plan draft',
+      status:'current partner draft / needs local mapping',
+      lastVerified:'2026-05-21',
+      verificationNote:'Partner agency record. Alameda County Probation posted a 2026 ACPD JJCPA YOBG Annual Plan draft with JJCC meeting materials. Confirm final approved plan, budget amount, and ACOE contact workflow before routing.',
+      sourceName:'Alameda County Probation JJCC materials',
+      sourceUrl:'https://probation.acgov.org/calendar/details.page?id=2026-02-10+16%3A20%3A51.823&name=juvenile-justice-coordinating-council-jjcc&year=2026',
+      allowables:['Juvenile justice coordination','Prevention and intervention planning','Re-entry and transition support','Case planning and multi-disciplinary team coordination','Data and reporting'],
+      targets:['justice-involved','children-youth','credit-deficient','foster-youth','housing-insecure'],
+      deliverables:['case-conference','rapid-enrollment','barrier-removal','data-sharing','family-engagement'],
+      sites:['Juvenile Justice Center','JJC / Transition Center','Countywide','Alameda County partner agencies'],
+      programs:['alameda-probation-juvenile','transition-reentry','attendance-team'],
+      needs:['juvenile-justice','reentry','attendance','school-climate','mental-health'],
+      internalLiaison:'Possible: Miriam Vasquez / Student Welfare and Attendance - needs confirmation',
+      liaisonStatus:'possible',
+      routingApproved:false,
+      reviewedBy:'Pilot research only',
+      confidence:'medium'
+    },
+    {
+      id:'partner-acbh-bhsa-fsp-housing-2026',
+      name:'Partner: Alameda County Behavioral Health BHSA FSP and Housing',
+      agency:'Alameda County Behavioral Health',
+      funding:'BHSA funding stream - amount not loaded for Alameda County pilot',
+      fiscalYear:'FY 2026-29 planning',
+      status:'current partner planning / needs local mapping',
+      lastVerified:'2026-05-21',
+      verificationNote:'Partner agency record. Alameda County Health posts BHSA Full-Service Partnership and Housing Intervention pages. Confirm Alameda County allocation detail, school-age youth pathways, and partner contact workflow before routing.',
+      sourceName:'Alameda County Health BHSA program pages',
+      sourceUrl:'https://health.alamedacountyca.gov/program/behavioral-health-services-act-bhsa/full-service-partnerships/',
+      allowables:['Full-Service Partnership support','Mental health and supportive services','Substance use disorder services','Housing support and engagement','Forensic ACT / intensive case management'],
+      targets:['behavioral-health-clients','children-youth','housing-insecure','justice-involved','families-with-young-children'],
+      deliverables:['full-service-partnership','behavioral-health-housing','case-conference','family-engagement','data-sharing'],
+      sites:['Countywide','Alameda County partner agencies','Unhoused service sites','JJC / Transition Center'],
+      programs:['acbh-behavioral-health','behavioral-health','transition-reentry'],
+      needs:['behavioral-health-systems','mental-health','substance-use','homelessness','reentry'],
+      internalLiaison:'Possible: Miriam Vasquez / Student Welfare and Attendance - needs confirmation',
+      liaisonStatus:'possible',
+      routingApproved:false,
+      reviewedBy:'Pilot research only',
+      confidence:'medium'
+    },
+    {
+      id:'partner-first5-measure-c-2025-30',
+      name:'Partner: First 5 Alameda County Measure C Early Care and Education',
+      agency:'First 5 Alameda County',
+      funding:'Approx. $150,000,000 annually countywide; First 5 administers 80% for child care, preschool, and early education',
+      fiscalYear:'2025-30 plan',
+      status:'active partner funding / needs local mapping',
+      lastVerified:'2026-05-21',
+      verificationNote:'Partner agency record. First 5 reports Measure C is a 0.5% sales tax generating approximately $150M annually, with First 5 administering the child care, preschool, and early education share. Confirm current ACOE early learning touchpoints before routing.',
+      sourceName:'First 5 Alameda County Measure C',
+      sourceUrl:'https://www.first5alameda.org/about-us/strategic-plan/the-childrens-health-child-care-initiative-for-alameda-county/',
+      allowables:['Emergency grants to early care educators and providers','Family, Friend, and Neighbor caregiver supports','Subsidized child care slots','Early educator wage floor and compensation supports','Facilities and inclusion supports'],
+      targets:['early-learners','families-with-young-children','low-income-children','english-learners','students-with-disabilities'],
+      deliverables:['caregiver-grants','childcare-subsidies','family-navigation','inclusive-classrooms','program-quality'],
+      sites:['Early Learning Providers','Family Resource Centers','Countywide'],
+      programs:['first5-measure-c','early-learning-inclusion','qris-quality-counts'],
+      needs:['early-learning','family-support','sped','ell'],
+      internalLiaison:'Possible: Maria Sujo / Early Learning - needs confirmation',
+      liaisonStatus:'possible',
+      routingApproved:false,
+      reviewedBy:'Pilot research only',
+      confidence:'medium'
+    },
+    {
+      id:'partner-first5-frc-shelter-2026',
+      name:'Partner: First 5 Family Resource Center and Shelter Grants',
+      agency:'First 5 Alameda County',
+      funding:'FRC grants up to $352,500 first term; shelter grants $25,000-$50,000 per year',
+      fiscalYear:'2026-27 first term',
+      status:'active partner grant cycle / needs local mapping',
+      lastVerified:'2026-05-21',
+      verificationNote:'Partner agency record. Alameda County posted First 5 Measure C Family Resource Center and Family Shelter grant details for 2026-27, with continuation expected through 2030 based on performance. Confirm awardees and local ACOE connection points before routing.',
+      sourceName:'Alameda County update: First 5 Funding Opportunities',
+      sourceUrl:'https://content.govdelivery.com/accounts/CAALAME/bulletins/3f98fe4',
+      allowables:['Family navigation','Weekly family programming','Family shelter support','Facilities funding interest','Community-based supports for prenatal-to-5 families'],
+      targets:['families-with-young-children','early-learners','low-income-children','housing-insecure','english-learners'],
+      deliverables:['family-navigation','family-engagement','housing-navigation','barrier-removal','partnership-development'],
+      sites:['Family Resource Centers','Unhoused service sites','Countywide'],
+      programs:['first5-measure-c','first5-neighborhoods-ready','foster-homeless'],
+      needs:['family-support','early-learning','homelessness','basic-needs'],
+      internalLiaison:'Possible: Maria Sujo / Early Learning and Miriam Vasquez / Student Welfare and Attendance - needs confirmation',
+      liaisonStatus:'possible',
+      routingApproved:false,
+      reviewedBy:'Pilot research only',
+      confidence:'medium'
+    },
+    {
+      id:'partner-first5-neighborhoods-ready',
+      name:'Partner: First 5 Neighborhoods Ready for School',
+      agency:'First 5 Alameda County',
+      funding:'Over $3,000,000 invested annually',
+      fiscalYear:'current initiative page',
+      status:'active partner initiative / needs local mapping',
+      lastVerified:'2026-05-21',
+      verificationNote:'Partner agency record. First 5 describes Neighborhoods Ready for School as a place-based investment with current grantee partners and family navigation, coordination, early childhood, and economic support components. Confirm grantee geography and ACOE touchpoints before routing.',
+      sourceName:'First 5 Neighborhoods Ready for School',
+      sourceUrl:'https://www.first5alameda.org/about-us/strategic-plan/neighborhoods/',
+      allowables:['Family leadership and civic engagement','Coordination and navigation','Early childhood school readiness services','Economic resources and family supports','Place-based system alignment'],
+      targets:['families-with-young-children','early-learners','low-income-children','english-learners','students-with-disabilities'],
+      deliverables:['family-navigation','family-engagement','partnership-development','program-quality','barrier-removal'],
+      sites:['Family Resource Centers','Countywide'],
+      programs:['first5-neighborhoods-ready','first5-measure-c','early-learning-inclusion','ell-family'],
+      needs:['family-support','early-learning','ell','basic-needs'],
+      internalLiaison:'Possible: Maria Sujo / Early Learning - needs confirmation',
+      liaisonStatus:'possible',
+      routingApproved:false,
+      reviewedBy:'Pilot research only',
+      confidence:'medium'
+    },
+    {
+      id:'partner-acssa-calworks-housing',
+      name:'Partner: Alameda County Social Services CalWORKs Housing Support',
+      agency:'Alameda County Social Services Agency',
+      funding:'Program funding amount not loaded - CalWORKs Housing Support Program located',
+      fiscalYear:'current program page',
+      status:'active partner program / needs local mapping',
+      lastVerified:'2026-05-21',
+      verificationNote:'Partner agency record. ACSSA describes CalWORKs Housing Support as assistance for CalWORKs families obtaining or keeping permanent housing, including rental assistance, deposits, utilities, moving costs, hotel vouchers, landlord recruitment, case management, outreach, legal services, and credit repair. Confirm current referral route before routing.',
+      sourceName:'ACSSA CalWORKs Housing Support Program',
+      sourceUrl:'https://www.alamedacountysocialservices.org/our-services/Shelter-and-Housing/CalWORKs-housing-assistance/tabs/CalWORKs-housing-support-program',
+      allowables:['Rental assistance','Security deposits and utilities','Moving costs and hotel vouchers','Housing outreach and placement','Case management and legal supports'],
+      targets:['calworks-families','families-with-young-children','housing-insecure','food-insecure-households','children-youth'],
+      deliverables:['housing-navigation','rental-assistance','barrier-removal','case-conference','family-navigation'],
+      sites:['Unhoused service sites','Countywide','Alameda County partner agencies'],
+      programs:['acssa-calworks-housing','foster-homeless','ell-family'],
+      needs:['homelessness','basic-needs','family-support','food-security'],
+      internalLiaison:'Possible: Miriam Vasquez / Student Welfare and Attendance - needs confirmation',
+      liaisonStatus:'possible',
+      routingApproved:false,
+      reviewedBy:'Pilot research only',
+      confidence:'medium'
+    },
+    {
+      id:'partner-accfb-prepared-meals-2025',
+      name:'Partner: ACCFB Prepared Meals Community Grants',
+      agency:'Alameda County Community Food Bank',
+      funding:'Recent grant cycle - award amount not loaded',
+      fiscalYear:'FY 2025-26 grant cycle',
+      status:'recent partner grant cycle / needs current awards',
+      lastVerified:'2026-05-21',
+      verificationNote:'Partner agency record. ACCFB posted a Prepared Meals Community Grant application for organizations preparing or distributing meals to unhoused neighbors or people without stable housing. Confirm current awardees, award amounts, and active service sites before routing.',
+      sourceName:'ACCFB Prepared Meals Community Grant',
+      sourceUrl:'https://www.accfb.org/prepare-meals-grant-application/',
+      allowables:['Food and supplies for prepared meals','Prepared meal distribution programming','Food safety and reporting requirements','CalFresh referral or outreach support','Capacity support for meal vendors and distributors'],
+      targets:['food-insecure-households','housing-insecure','low-income-children','families-with-young-children'],
+      deliverables:['prepared-meals','food-distribution','calfresh-outreach','barrier-removal','family-navigation'],
+      sites:['Food distribution partners','Unhoused service sites','Countywide'],
+      programs:['accfb-prepared-meals','accfb-food-access'],
+      needs:['food-security','homelessness','basic-needs','family-support'],
+      internalLiaison:'TBD - identify ACOE basic-needs or community schools liaison',
+      liaisonStatus:'tbd',
+      routingApproved:false,
+      reviewedBy:'Pilot research only',
+      confidence:'low'
+    },
+    {
+      id:'partner-accfb-calfresh-outreach',
+      name:'Partner: ACCFB CalFresh Outreach',
+      agency:'Alameda County Community Food Bank',
+      funding:'Outreach program reports more than $20,000,000 per year in local economic stimulus from enrollment support',
+      fiscalYear:'current program page',
+      status:'active partner program / needs local mapping',
+      lastVerified:'2026-05-21',
+      verificationNote:'Partner agency record. ACCFB states its multilingual CalFresh Outreach team helps eligible community members with applications, hosts outreach at schools, clinics, and food distributions, and collaborates with partners through trainings, capacity grants, and outreach fairs.',
+      sourceName:'ACCFB CalFresh Outreach',
+      sourceUrl:'https://www.accfb.org/about-us/calfresh/',
+      allowables:['CalFresh eligibility screening','Application support','Multilingual outreach','Community partner training','Food access referral'],
+      targets:['food-insecure-households','calworks-families','families-with-young-children','low-income-children','english-learners'],
+      deliverables:['calfresh-outreach','food-distribution','family-navigation','barrier-removal','partnership-development'],
+      sites:['Food distribution partners','Family Resource Centers','Countywide'],
+      programs:['accfb-food-access','acssa-calworks-housing','ell-family'],
+      needs:['food-security','basic-needs','family-support','ell'],
+      internalLiaison:'TBD - identify ACOE basic-needs or family engagement liaison',
+      liaisonStatus:'tbd',
+      routingApproved:false,
+      reviewedBy:'Pilot research only',
+      confidence:'low'
+    },
+    {
+      id:'haas-teacher-workforce',
+      name:'Haas Fund Teacher Workforce Planning',
+      funding:'$40,000 - one-year project support grant',
+      fiscalYear:'2018-19',
+      status:'historical',
+      lastVerified:'2026-05-15',
+      verificationNote:'One-year 2018-19 grant record. Keep as historical only unless ACOE identifies a current teacher workforce grant to replace it.',
+      sourceName:'Walter and Elise Haas Fund grant record',
+      sourceUrl:'https://haassr.org/grant/alameda-county-office-of-education-3/',
+      allowables:['Teacher workforce planning','Countywide district collaboration','Educator diversity planning'],
+      targets:['teachers-candidates'],
+      deliverables:['partnership-development','annual-report'],
+      sites:['Countywide','18 Alameda County districts and charters'],
+      programs:['teacher-workforce'],
+      needs:['teacher-workforce']
+    }
+  ]
+};
+
+const selected = {
+  needs:new Set(),
+  targets:new Set(),
+  deliverables:new Set(),
+  programs:new Set(),
+  grants:new Set(),
+  roles:new Set(),
+  sites:new Set()
+};
+let lastResults = { staff:[], grants:[], primary:null, cc:[] };
+const portalState = {
+  fundingType:'all',
+  fundingAgency:'all',
+  fundingValidation:'all'
+};
+
+const labelLookup = {};
+DATA.signals.forEach(group => group.items.forEach(([id,label]) => labelLookup[id] = label));
+DATA.sites.forEach(site => labelLookup[site] = site);
+
+const workAreaCopy = {
+  'community-schools-county':'Countywide coordination, LEA support, coaching, data sharing, and assets/needs mapping.',
+  'expanded-learning-systems':'Expanded learning systems of support, ELO-P, ASES, 21st CCLC, and STEAM enrichment.',
+  'early-learning-inclusion':'Preschool quality, inclusive early education, QRIS, and support for children with disabilities.',
+  'school-climate-lcssp':'Non-punitive school climate supports, attendance, re-engagement, and wellness overlap.',
+  'california-serves':'Service learning, civic engagement, student voice, and State Seal of Civic Engagement work.',
+  'teacher-workforce':'Teacher workforce diversity planning, educator pipeline, and countywide district collaboration.',
+  'career-pathways':'Career pathways, CTE, work-based learning, pathway enrollment, and employer connections.',
+  'transition-reentry':'JJC return, re-entry, rapid enrollment, case conferencing, and transition support.',
+  'attendance-team':'Attendance, re-engagement, family outreach, and barrier-removal work.',
+  'behavioral-health':'Behavioral health, wellness, case conference, and site support work.',
+  'acbh-behavioral-health':'Partner behavioral health, FSP, housing intervention, SUD, and re-entry overlap.',
+  'acssa-calworks-housing':'Partner housing support, CalWORKs family support, and basic-needs overlap.',
+  'accfb-food-access':'Partner food security, CalFresh outreach, food distribution, and family basic-needs overlap.',
+  'accfb-prepared-meals':'Partner prepared meals, food access, and unhoused service site overlap.',
+  'alameda-probation-juvenile':'Partner juvenile justice, re-entry, attendance, and case conference overlap.',
+  'first5-measure-c':'Partner early care, child care access, Family Resource Centers, and inclusion supports.',
+  'first5-neighborhoods-ready':'Partner school readiness, family navigation, and neighborhood early learning support.',
+  'special-education':'Special education coordination, inclusive supports, and intervention reporting.',
+  'ell-family':'English learner access, family engagement, and language access connections.',
+  'qris-quality-counts':'Quality Counts, QRIS, CSPP quality improvement, and early learning provider support.',
+  'foster-homeless':'Foster youth, homelessness, barrier removal, enrollment support, and cross-system coordination.',
+  'opportunity-adult':'Opportunity Academy, adult education, diploma completion, and over-age learner pathways.',
+  'charter-support':'Charter support is included as a future mapping area and needs owner/data confirmation.'
+};
+
+function init() {
+  const siteSelect = document.getElementById('scope-site');
+  DATA.sites.forEach(site => {
+    const option = document.createElement('option');
+    option.value = site;
+    option.textContent = site;
+    siteSelect.appendChild(option);
+  });
+
+  const signalGroups = document.getElementById('signal-groups');
+  signalGroups.innerHTML = DATA.signals.map(group => `
+    <div class="signal-section">
+      <div class="signal-section-label">${group.title}</div>
+      <div class="chips-wrap">
+        ${group.items.map(([id,label]) => `<button type="button" class="chip" id="chip-${group.key}-${id}" onclick="toggleSignal('${group.key}','${id}')"><span class="chip-dot"></span>${label}</button>`).join('')}
+      </div>
+    </div>
+  `).join('') + `
+    <div class="signal-section">
+      <div class="signal-section-label">Sites</div>
+      <div class="chips-wrap">
+        ${DATA.sites.map(site => `<button type="button" class="chip" id="chip-sites-${safeId(site)}" onclick="toggleSignal('sites','${escAttr(site)}')"><span class="chip-dot"></span>${site}</button>`).join('')}
+      </div>
+    </div>
+  `;
+  updateSelectedSummary();
+  renderPilotPortals();
+  renderHomeWorkAreas();
+}
+
+function allPanels() {
+  return ['portal-home','step1','step2','step3','step4','data-view','portal-grants','portal-staff','portal-programs','portal-agencies','portal-glossary','portal-admin'];
+}
+
+function showPortal(name) {
+  allPanels().forEach(id => document.getElementById(id).classList.add('hidden'));
+  document.querySelectorAll('.portal-btn').forEach(btn => btn.classList.remove('active'));
+  const active = document.getElementById('pbtn-' + name);
+  if (active) active.classList.add('active');
+
+  if (name === 'home') {
+    document.getElementById('steps-bar').classList.add('hidden');
+    document.getElementById('portal-home').classList.remove('hidden');
+    renderHomeWorkAreas();
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+
+  if (name === 'overlap') {
+    document.getElementById('steps-bar').classList.remove('hidden');
+    goStep(1);
+    return;
+  }
+
+  document.getElementById('steps-bar').classList.add('hidden');
+  const panel = document.getElementById('portal-' + name);
+  if (panel) panel.classList.remove('hidden');
+  renderPilotPortals();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderPilotPortals() {
+  renderGrantPortal();
+  renderStaffPortal();
+  renderProgramPortal();
+  renderAgencyPortal();
+  renderGlossaryPortal();
+  renderAdminPortal();
+}
+
+function scrollToWorkAreas() {
+  document.getElementById('work-area-start').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function renderHomeWorkAreas() {
+  const grid = document.getElementById('work-area-grid');
+  if (!grid) return;
+  const query = (document.getElementById('work-search')?.value || '').trim().toLowerCase();
+  const grants = currentWorkGrants();
+  const programs = DATA.signals.find(group => group.key === 'programs').items.map(([id,label]) => {
+    const areaGrants = grants.filter(g => g.programs.includes(id));
+    const staff = DATA.staff.filter(p => p.programs.includes(id));
+    const sites = unique([...areaGrants.flatMap(g => g.sites), ...staff.flatMap(p => p.sites)]);
+    const deliverables = unique([...areaGrants.flatMap(g => g.deliverables), ...staff.flatMap(p => p.deliverables)]);
+    const targets = unique([...areaGrants.flatMap(g => g.targets), ...staff.flatMap(p => p.targets)]);
+    const haystack = [label, workAreaCopy[id], ...areaGrants.map(g => g.name), ...sites, ...deliverables.map(d => labelLookup[d] || d), ...targets.map(t => labelLookup[t] || t)].join(' ').toLowerCase();
+    return { id, label, grants: areaGrants, staff, sites, deliverables, targets, haystack };
+  })
+    .filter(area => area.grants.length || area.staff.length)
+    .filter(area => !query || area.haystack.includes(query));
+
+  document.getElementById('work-area-count').textContent = programs.length + ' area' + (programs.length !== 1 ? 's' : '');
+  grid.innerHTML = programs.map(area => `
+    <button class="work-card" onclick="exploreWorkArea('${area.id}')">
+      <div class="work-card-top">
+        <div class="work-card-title">${esc(area.label)}</div>
+        <div class="work-card-count">${area.grants.length} funding</div>
+      </div>
+      <div class="work-card-copy">${esc(workAreaCopy[area.id] || 'Mapped work area. Click to see funding, staff, site, and deliverable overlap.')}</div>
+      <div class="relationship-tags">
+        <span class="relationship-tag ${area.staff.length ? '' : 'warn'}">${area.staff.length ? area.staff.length + ' ACOE staff' : 'ACOE liaison TBD'}</span>
+        <span class="relationship-tag">${area.sites.length} sites/scopes</span>
+        <span class="relationship-tag">${area.deliverables.length} deliverables</span>
+      </div>
+    </button>
+  `).join('') || '<div class="empty-state">No work areas match that search.</div>';
+}
+
+function exploreWorkArea(programId) {
+  clearSignals();
+  toggleSignal('programs', programId);
+  seedRelatedSignalsForProgram(programId);
+  document.getElementById('scope-site').value = '';
+  document.getElementById('scope-urgency').value = 'routine';
+  updateSelectedSummary();
+  document.getElementById('scope-context').value = `Exploring work area: ${labelLookup[programId] || programId}. Show who else overlaps through related needs, target populations, deliverables, sites, and funding.`;
+  lastResults = calculateResults();
+  renderResults();
+  goStep(3);
+}
+
+function seedRelatedSignalsForProgram(programId) {
+  const relatedStaff = DATA.staff.filter(person => person.programs.includes(programId));
+  const relatedGrants = currentWorkGrants().filter(grant => grant.programs.includes(programId));
+  const related = [...relatedStaff, ...relatedGrants];
+  const limits = relatedStaff.length ? { needs:3, targets:3, deliverables:3 } : { needs:2, targets:2, deliverables:2 };
+  [
+    ['needs', limits.needs],
+    ['targets', limits.targets],
+    ['deliverables', limits.deliverables]
+  ].forEach(([key, limit]) => {
+    rankedValues(related, key)
+      .filter(id => !(key === 'deliverables' && id === 'annual-report'))
+      .slice(0, limit)
+      .forEach(id => selected[key].add(id));
+  });
+  rankedValues(related, 'sites')
+    .filter(site => site !== 'Countywide')
+    .slice(0, 2)
+    .forEach(site => selected.sites.add(site));
+}
+
+function rankedValues(entities, key) {
+  const counts = new Map();
+  const order = [];
+  entities.forEach(entity => {
+    (entity[key] || []).forEach(value => {
+      if (!counts.has(value)) order.push(value);
+      counts.set(value, (counts.get(value) || 0) + 1);
+    });
+  });
+  const originalIndex = new Map(order.map((value,index) => [value,index]));
+  return order.sort((a,b) => counts.get(b) - counts.get(a) || originalIndex.get(a) - originalIndex.get(b));
+}
+
+function safeId(value) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+
+function escAttr(value) {
+  return String(value).replace(/'/g,'&#39;');
+}
+
+function esc(value) {
+  return String(value || '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+function toggleSignal(key, id) {
+  if (selected[key].has(id)) selected[key].delete(id);
+  else selected[key].add(id);
+
+  const chipId = key === 'sites' ? 'chip-sites-' + safeId(id) : 'chip-' + key + '-' + id;
+  const chip = document.getElementById(chipId);
+  if (chip) chip.classList.toggle('on', selected[key].has(id));
+  updateSelectedSummary();
+}
+
+function updateSelectedSummary() {
+  const tags = [];
+  Object.keys(selected).forEach(key => {
+    selected[key].forEach(id => tags.push(`<span class="summary-tag">${esc(labelLookup[id] || id)}</span>`));
+  });
+  document.getElementById('summary-tags').innerHTML = tags.length ? tags.join('') : '<span style="color:var(--ink4)">No signals selected yet.</span>';
+}
+
+function goStep(n) {
+  allPanels().forEach(id => document.getElementById(id).classList.add('hidden'));
+  [1,2,3,4].forEach(i => document.getElementById('step' + i).classList.toggle('hidden', i !== n));
+  document.getElementById('steps-bar').classList.remove('hidden');
+  document.querySelectorAll('.portal-btn').forEach(btn => btn.classList.remove('active'));
+  const overlapBtn = document.getElementById('pbtn-overlap');
+  if (overlapBtn) overlapBtn.classList.add('active');
+  [1,2,3,4].forEach(i => {
+    const sn = document.getElementById('sn' + i);
+    const sl = document.getElementById('sl' + i);
+    const ln = document.getElementById('line' + i);
+    sn.className = 'step-n ' + (i < n ? 'done' : i === n ? 'active' : 'todo');
+    sl.className = 'step-label ' + (i < n ? 'done' : i === n ? 'active' : '');
+    sn.textContent = i < n ? 'OK' : i;
+    if (ln) ln.className = 'step-line ' + (i < n ? 'done' : '');
+  });
+  if (n === 4) prepareRoute();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function loadExample() {
+  document.getElementById('requester-name').value = 'Demo Central Staff';
+  document.getElementById('requester-email').value = 'demo.staff@acoe.org';
+  document.getElementById('scope-site').value = 'Countywide';
+  document.getElementById('scope-urgency').value = 'urgent';
+  document.getElementById('scope-context').value = 'Need to coordinate countywide community schools support across LEAs, clarify which funding records touch coaching, data sharing, assets and needs mapping, and identify the primary staff route.';
+  clearSignals();
+  [
+    ['needs','community-schools'],['needs','attendance'],['needs','basic-needs'],
+    ['targets','community-school-grantees'],['targets','foster-youth'],
+    ['deliverables','coaching-ta'],['deliverables','data-sharing'],['deliverables','assets-needs-map'],
+    ['programs','community-schools-county'],
+    ['grants','ccspp-county-coordination'],['roles','program-lead'],['sites','Countywide']
+  ].forEach(([key,id]) => toggleSignal(key,id));
+  toast('Example loaded');
+}
+
+function clearSignals() {
+  Object.keys(selected).forEach(key => selected[key].clear());
+  document.querySelectorAll('.chip').forEach(chip => chip.classList.remove('on'));
+  updateSelectedSummary();
+}
+
+function selectedCount() {
+  return Object.values(selected).reduce((sum,set) => sum + set.size, 0);
+}
+
+function findOverlap() {
+  const scopeSite = document.getElementById('scope-site').value;
+  if (scopeSite && !selected.sites.has(scopeSite)) {
+    toggleSignal('sites', scopeSite);
+  }
+  if (selectedCount() === 0) {
+    alert('Select at least one overlap signal.');
+    return;
+  }
+  lastResults = calculateResults();
+  renderResults();
+  goStep(3);
+}
+
+function calculateResults() {
+  const staff = DATA.staff.map(person => scoreStaff(person))
+    .filter(item => item.reasons.length > 0 && hasEnoughOverlap(item.reasons))
+    .sort((a,b) => b.score - a.score || b.priority - a.priority);
+
+  const grants = currentWorkGrants().map(grant => scoreGrant(grant))
+    .filter(item => item.score > 0 && hasEnoughOverlap(item.reasons))
+    .sort((a,b) => b.score - a.score);
+
+  const primary = staff.find(item => item.primaryRoute !== false) || staff[0] || null;
+  const cc = staff.filter(item => primary && item.id !== primary.id && item.score >= Math.max(5, primary.score * .38)).slice(0,5);
+  return { staff, grants, primary, cc };
+}
+
+function hasEnoughOverlap(reasons) {
+  if (selectedCount() <= 1) return true;
+  const strongKeys = new Set(['programs','grants','sites']);
+  return reasons.some(reason => strongKeys.has(reason.key)) || reasons.length >= 2;
+}
+
+function staffMatchLabel(person) {
+  if (lastResults.primary && lastResults.primary.id === person.id) return {label:'First place to start', tone:'green'};
+  if (lastResults.cc.some(item => item.id === person.id)) return {label:'Loop in', tone:'gold'};
+  return {label:'Related work', tone:'teal'};
+}
+
+function grantMatchLabel(grant) {
+  return fundingLane(grant);
+}
+
+function overlapReasons(entity) {
+  const reasons = [];
+  const weights = {needs:3, targets:3, deliverables:2, programs:3, grants:4, roles:2, sites:2};
+  Object.keys(weights).forEach(key => {
+    const entityValues = key === 'roles' ? [entity.roleKey] : key === 'grants' && entity.id ? [entity.id, ...(entity.grants || [])] : (entity[key] || []);
+    selected[key].forEach(id => {
+      if (entityValues.includes(id)) {
+        reasons.push({ key, id, label: labelLookup[id] || id, weight: weights[key] });
+      }
+    });
+  });
+  return reasons;
+}
+
+function scoreStaff(person) {
+  const reasons = overlapReasons(person);
+  let score = reasons.reduce((sum,item) => sum + item.weight, 0);
+  const urgency = document.getElementById('scope-urgency').value;
+  if (urgency === 'urgent' && ['program-lead','grant-lead'].includes(person.roleKey)) score += 3;
+  if (urgency === 'elevated' && ['program-lead','case-manager','site-liaison'].includes(person.roleKey)) score += 1;
+  score += person.priority;
+  return { ...person, score, reasons };
+}
+
+function scoreGrant(grant) {
+  const reasons = overlapReasons(grant);
+  const score = reasons.reduce((sum,item) => sum + item.weight, 0);
+  return { ...grant, score, reasons };
+}
+
+function renderResults() {
+  const {staff, grants, primary, cc} = lastResults;
+  document.getElementById('results-count').textContent = staff.length + ' staff match' + (staff.length !== 1 ? 'es' : '') + ' / ' + grants.length + ' funding match' + (grants.length !== 1 ? 'es' : '');
+
+  document.getElementById('route-preview').innerHTML = primary ? routeCard(primary, cc, false) : '<div class="empty-state">No staff overlap found. Adjust the signals and try again.</div>';
+  document.getElementById('staff-cards').innerHTML = staff.length ? limitedCardList(staff, staffCard, 3, 'staff matches') : '<div class="empty-state">No staff matches.</div>';
+  document.getElementById('grant-cards').innerHTML = grants.length ? fundingLaneSections(grants, 3) : '<div class="empty-state">No current funding record is mapped to this area yet.</div>';
+  renderStaffTable(staff);
+  renderGrantTable(grants);
+}
+
+function limitedCardList(items, renderer, limit, label) {
+  const shown = items.slice(0, limit);
+  const hidden = items.slice(limit);
+  const visible = shown.map(renderer).join('');
+  if (!hidden.length) return visible;
+  return visible + `
+    <details class="advanced-block">
+      <summary>Show ${hidden.length} more ${esc(label)}</summary>
+      <div class="lane-body">${hidden.map(renderer).join('')}</div>
+    </details>
+  `;
+}
+
+function fundingLaneMeta(key) {
+  const map = {
+    direct:{title:'Directly mapped', copy:'Confirmed or locally mapped funding route.'},
+    likely:{title:'Likely overlap', copy:'Shared signals, but no direct owner mapping yet.'},
+    'needs-validation':{title:'Needs validation', copy:'Partner, draft, or unconfirmed record. Verify before routing.'}
+  };
+  return map[key] || map.likely;
+}
+
+function fundingLaneSections(records, limit) {
+  const shown = records.slice(0, limit);
+  const hidden = records.slice(limit);
+  let html = renderFundingLaneSet(shown);
+  if (hidden.length) {
+    html += `
+      <details class="advanced-block">
+        <summary>Show ${hidden.length} more funding matches</summary>
+        <div class="lane-body">${renderFundingLaneSet(hidden)}</div>
+      </details>
+    `;
+  }
+  return html;
+}
+
+function renderFundingLaneSet(records) {
+  return ['direct','likely','needs-validation'].map(key => {
+    const laneRecords = records.filter(record => fundingLane(record).key === key);
+    if (!laneRecords.length) return '';
+    const meta = fundingLaneMeta(key);
+    return `
+      <div class="lane-block">
+        <div class="lane-hdr">
+          <div>
+            <div class="lane-title">${esc(meta.title)}</div>
+            <div class="lane-copy">${esc(meta.copy)}</div>
+          </div>
+          <span class="pill ${key === 'direct' ? 'green' : key === 'needs-validation' ? 'gold' : 'teal'}">${laneRecords.length}</span>
+        </div>
+        <div class="lane-body">${laneRecords.map(grantCard).join('')}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function unique(values) {
+  return [...new Set(values.filter(Boolean))];
+}
+
+function metricCard(num, label) {
+  return `<div class="metric"><div class="metric-num">${num}</div><div class="metric-label">${label}</div></div>`;
+}
+
+function sourceLink(item) {
+  if (!item.sourceUrl) return esc(item.sourceName || 'Source TBD');
+  return `<a class="source-link" href="${esc(item.sourceUrl)}" target="_blank" rel="noopener">${esc(item.sourceName || 'Source')}</a>`;
+}
+
+function fundingOwnerType(grant) {
+  return grant.agency ? 'partner' : 'acoe';
+}
+
+function fundingNeedsValidation(grant) {
+  const status = String(grant.status || '').toLowerCase();
+  return fundingOwnerType(grant) === 'partner' ||
+    status.includes('needs') ||
+    status.includes('draft') ||
+    status.includes('tbd') ||
+    status.includes('recent partner');
+}
+
+function validationLabel(grant) {
+  if (grant.routingApproved) return 'Routing approved';
+  if (fundingOwnerType(grant) === 'partner') {
+    return grant.liaisonStatus === 'tbd' ? 'Partner record - liaison TBD' : 'Partner record - possible liaison';
+  }
+  return fundingNeedsValidation(grant) ? 'Needs owner validation' : 'Locally mapped';
+}
+
+function fundingLane(grant) {
+  const directStaff = grantStaff(grant.id).some(person => person.grantOverlap.direct || person.grantOverlap.oversight);
+  if (fundingNeedsValidation(grant)) return {key:'needs-validation', label:'Needs validation', tone:'gold'};
+  if (directStaff) return {key:'direct', label:'Directly mapped', tone:'green'};
+  if ((grant.score || 0) > 0) return {key:'likely', label:'Likely overlap', tone:'teal'};
+  return {key:'likely', label:'Mapped funding', tone:'teal'};
+}
+
+function internalLiaison(grant) {
+  if (grant.internalLiaison) return grant.internalLiaison;
+  if (fundingOwnerType(grant) === 'partner') return 'TBD - confirm internal ACOE liaison before routing';
+  const mapped = grantStaff(grant.id);
+  if (!mapped.length) return 'Needs owner validation';
+  return mapped.slice(0, 3).map(person => person.name).join(', ');
+}
+
+function validationDetails(grant) {
+  const routeUse = grant.routingApproved ? 'Yes' : 'No - verify owner before routing';
+  return [
+    ['Last reviewed', grant.lastVerified || 'TBD'],
+    ['Reviewed by', grant.reviewedBy || 'Pilot research only'],
+    ['Confidence', grant.confidence || (fundingNeedsValidation(grant) ? 'low' : 'medium')],
+    ['Use for routing', routeUse],
+    ['Validation', validationLabel(grant)]
+  ];
+}
+
+function validationDetailsText(grant) {
+  return validationDetails(grant)
+    .map(([label,value]) => `${label}: ${value}`)
+    .join(' | ');
+}
+
+function isCurrentWorkGrant(grant) {
+  return !String(grant.status || '').toLowerCase().includes('historical');
+}
+
+function currentWorkGrants() {
+  return DATA.grants.filter(isCurrentWorkGrant);
+}
+
+function currentGrantIds() {
+  return new Set(currentWorkGrants().map(g => g.id));
+}
+
+function statusBadge(item) {
+  const status = item.status || 'status needs validation';
+  const normalized = status.toLowerCase();
+  const tone = normalized.includes('historical') ? 'gold' : normalized.includes('needs') || normalized.includes('draft') || normalized.includes('tbd') ? 'gold' : normalized.includes('active') ? 'green' : 'teal';
+  return `<span class="pill ${tone}">${esc(status)}</span>`;
+}
+
+function grantsForDisplay(person) {
+  const current = currentGrantIds();
+  return unique([...(person.grants || []), ...(person.oversightGrants || [])].filter(id => current.has(id)));
+}
+
+function overlapValues(left, right) {
+  const rightSet = new Set(right || []);
+  return unique((left || []).filter(value => rightSet.has(value)));
+}
+
+function labelList(ids, limit) {
+  const shown = (ids || []).slice(0, limit || 3).map(id => labelLookup[id] || id);
+  const extra = (ids || []).length - shown.length;
+  return shown.join(', ') + (extra > 0 ? ` +${extra} more` : '');
+}
+
+function grantStaffOverlap(grant, person) {
+  const reasons = [];
+  let score = 0;
+  const direct = (person.grants || []).includes(grant.id);
+  const oversight = (person.oversightGrants || []).includes(grant.id);
+
+  if (direct) {
+    score += 90;
+    reasons.push('Direct funding route');
+  }
+  if (oversight) {
+    score += 70;
+    reasons.push('Oversight/reference route');
+  }
+
+  const programs = overlapValues(person.programs, grant.programs);
+  const targets = overlapValues(person.targets, grant.targets);
+  const deliverables = overlapValues(person.deliverables, grant.deliverables);
+  const needs = overlapValues(person.needs, grant.needs);
+  const sites = overlapValues(person.sites, grant.sites);
+  const specificSites = sites.filter(site => site !== 'Countywide');
+
+  if (programs.length) {
+    score += programs.length * 18;
+    reasons.push(`Same program: ${labelList(programs, 2)}`);
+  }
+  if (targets.length) {
+    score += targets.length * 12;
+    reasons.push(`Shared target: ${labelList(targets, 2)}`);
+  }
+  if (deliverables.length) {
+    score += deliverables.length * 10;
+    reasons.push(`Shared deliverable: ${labelList(deliverables, 2)}`);
+  }
+  if (needs.length) {
+    score += needs.length * 8;
+    reasons.push(`Same need area: ${labelList(needs, 2)}`);
+  }
+  if (specificSites.length) {
+    score += specificSites.length * 8;
+    reasons.push(`Same site/scope: ${labelList(specificSites, 2)}`);
+  } else if (sites.length) {
+    score += 3;
+    reasons.push(`Same scope: ${labelList(sites, 1)}`);
+  }
+
+  return { score, direct, oversight, reasons };
+}
+
+function grantStaff(grantId) {
+  const grant = DATA.grants.find(g => g.id === grantId);
+  if (!grant) return [];
+  return DATA.staff
+    .map(person => ({ ...person, grantOverlap: grantStaffOverlap(grant, person) }))
+    .filter(person => person.grantOverlap.direct || person.grantOverlap.oversight || person.grantOverlap.score >= 20)
+    .sort((a,b) => {
+      return b.grantOverlap.score - a.grantOverlap.score || (b.priority || 0) - (a.priority || 0) || a.name.localeCompare(b.name);
+    });
+}
+
+function grantStaffList(grantId, limit) {
+  const mapped = grantStaff(grantId);
+  const grant = DATA.grants.find(g => g.id === grantId);
+  if (!mapped.length) {
+    return fundingOwnerType(grant || {}) === 'partner'
+      ? '<span style="color:var(--ink4)">No confirmed ACOE liaison yet</span>'
+      : '<span style="color:var(--ink4)">Needs owner validation</span>';
+  }
+  const shown = mapped.slice(0, limit || 8);
+  const hidden = mapped.length - shown.length;
+  const result = shown.map(person => {
+    const match = person.grantOverlap;
+    const relation = match.direct ? 'Direct map' : match.oversight ? 'Oversight/reference' : 'Work overlap';
+    const tone = match.direct ? 'green' : match.oversight ? 'gold' : 'teal';
+    return `<div><strong>${esc(person.name)}</strong> <span class="pill ${tone}">${esc(relation)}</span><br><span style="color:var(--ink4)">${esc(person.role)}</span><br><span style="color:var(--ink3)">${esc(match.reasons.slice(0, 4).join('; '))}</span></div>`;
+  }).join('<br>');
+  return hidden > 0 ? result + `<br><span style="color:var(--ink4)">+${hidden} more overlap matches</span>` : result;
+}
+
+function renderGrantPortal() {
+  const body = document.getElementById('grant-portal-body');
+  if (!body) return;
+  const allGrants = currentWorkGrants();
+  const grants = filteredFundingRecords(allGrants);
+  const partnerCount = grants.filter(g => fundingOwnerType(g) === 'partner').length;
+  const grantRows = grants.map(g => `
+    <tr>
+      <td><strong>${esc(g.name)}</strong><br><span style="color:var(--ink4)">${esc(g.fiscalYear || 'Fiscal year TBD')}</span></td>
+      <td>${esc(g.agency || 'ACOE')}</td>
+      <td>${esc(g.funding)}</td>
+      <td>${statusBadge(g)}<br><span style="color:var(--ink4)">${esc(g.lastVerified ? 'Verified ' + g.lastVerified : 'Verification date TBD')}</span></td>
+      <td>${chips(g.programs)}</td>
+      <td>${chips(g.targets)}</td>
+      <td>${chips(g.deliverables)}</td>
+      <td>${grantStaffList(g.id, 6)}</td>
+      <td>${esc(internalLiaison(g))}<br><span style="color:var(--ink4)">${esc(validationLabel(g))}</span></td>
+      <td>${sourceLink(g)}</td>
+    </tr>
+  `).join('');
+  body.innerHTML = `
+    <div class="metric-grid">
+      ${metricCard(grants.length + ' / ' + allGrants.length, 'shown records')}
+      ${metricCard(partnerCount, 'partner records')}
+      ${metricCard(unique(grants.map(g => g.agency || 'ACOE')).length, 'agencies / sources')}
+      ${metricCard(unique(grants.flatMap(g => g.deliverables)).length, 'deliverables touched')}
+    </div>
+    ${fundingFilterControls(allGrants)}
+    <div class="quick-guide">
+      <span class="guide-pill"><strong>ACOE</strong> = ACOE-owned or locally mapped funding</span>
+      <span class="guide-pill"><strong>Partner</strong> = outside agency funding/work</span>
+      <span class="guide-pill"><strong>Needs local mapping</strong> = verify before routing</span>
+    </div>
+    ${grants.length ? renderFundingLaneSet(grants) : '<div class="empty-state">No funding records match those filters.</div>'}
+    <details class="advanced-block">
+      <summary>Show funding table</summary>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Record</th><th>Agency</th><th>Funding</th><th>Status</th><th>Programs</th><th>Targets</th><th>Deliverables</th><th>Mapped Staff / Why</th><th>Internal Liaison</th><th>Source</th></tr></thead>
+          <tbody>${grantRows}</tbody>
+        </table>
+      </div>
+    </details>
+  `;
+}
+
+function fundingFilterControls(records) {
+  const agencies = unique(records.map(g => g.agency || 'ACOE')).sort((a,b) => a.localeCompare(b));
+  return `
+    <div class="filter-bar">
+      <div class="filter-field">
+        <label>Owner Type</label>
+        <select onchange="setFundingFilter('fundingType', this.value)">
+          <option value="all" ${portalState.fundingType === 'all' ? 'selected' : ''}>All funding</option>
+          <option value="acoe" ${portalState.fundingType === 'acoe' ? 'selected' : ''}>ACOE only</option>
+          <option value="partner" ${portalState.fundingType === 'partner' ? 'selected' : ''}>Partners only</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label>Agency</label>
+        <select onchange="setFundingFilter('fundingAgency', this.value)">
+          <option value="all" ${portalState.fundingAgency === 'all' ? 'selected' : ''}>All agencies</option>
+          ${agencies.map(agency => `<option value="${esc(agency)}" ${portalState.fundingAgency === agency ? 'selected' : ''}>${esc(agency)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="filter-field">
+        <label>Validation</label>
+        <select onchange="setFundingFilter('fundingValidation', this.value)">
+          <option value="all" ${portalState.fundingValidation === 'all' ? 'selected' : ''}>All validation levels</option>
+          <option value="direct" ${portalState.fundingValidation === 'direct' ? 'selected' : ''}>Directly mapped</option>
+          <option value="likely" ${portalState.fundingValidation === 'likely' ? 'selected' : ''}>Likely overlap</option>
+          <option value="needs-validation" ${portalState.fundingValidation === 'needs-validation' ? 'selected' : ''}>Needs validation</option>
+        </select>
+      </div>
+    </div>
+  `;
+}
+
+function setFundingFilter(key, value) {
+  portalState[key] = value;
+  renderGrantPortal();
+}
+
+function filteredFundingRecords(records) {
+  return records.filter(record => {
+    if (portalState.fundingType === 'acoe' && fundingOwnerType(record) !== 'acoe') return false;
+    if (portalState.fundingType === 'partner' && fundingOwnerType(record) !== 'partner') return false;
+    if (portalState.fundingAgency !== 'all' && (record.agency || 'ACOE') !== portalState.fundingAgency) return false;
+    if (portalState.fundingValidation !== 'all' && fundingLane(record).key !== portalState.fundingValidation) return false;
+    return true;
+  });
+}
+
+function renderStaffPortal() {
+  const body = document.getElementById('staff-portal-body');
+  if (!body) return;
+  const rows = DATA.staff.map(p => `
+    <tr>
+      <td><strong>${esc(p.name)}</strong><br><span style="color:var(--ink4)">${esc(p.email)}</span></td>
+      <td>${esc(p.role)}</td>
+      <td>${chips(p.programs)}</td>
+      <td>${chips(grantsForDisplay(p))}</td>
+      <td>${p.sites.map(esc).join('<br>')}</td>
+      <td>${esc(p.note)}</td>
+      <td>${sourceLink(p)}<br><span style="color:var(--ink4)">${esc(p.validation || 'Validation note TBD')}</span></td>
+    </tr>
+  `).join('');
+  body.innerHTML = `
+    <div class="metric-grid">
+      ${metricCard(DATA.staff.length, 'current staff records')}
+      ${metricCard(unique(DATA.staff.flatMap(p => grantsForDisplay(p))).length, 'funding links')}
+      ${metricCard(unique(DATA.staff.flatMap(p => p.programs)).length, 'program links')}
+      ${metricCard(unique(DATA.staff.flatMap(p => p.sites)).length, 'site links')}
+    </div>
+    <div class="grid-two">${DATA.staff.map(staffCard).join('')}</div>
+    <details class="advanced-block">
+      <summary>Show people table</summary>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Staff / Role</th><th>Role</th><th>Programs</th><th>Mapped Funding</th><th>Sites</th><th>Routing Note</th><th>Source / Validation</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </details>
+  `;
+}
+
+function renderProgramPortal() {
+  const body = document.getElementById('program-portal-body');
+  if (!body) return;
+  const grants = currentWorkGrants();
+  const programs = DATA.signals.find(group => group.key === 'programs').items.map(([id,label]) => {
+    const programGrants = grants.filter(g => g.programs.includes(id));
+    const staff = DATA.staff.filter(p => p.programs.includes(id));
+    const sites = unique([...programGrants.flatMap(g => g.sites), ...staff.flatMap(p => p.sites)]);
+    const deliverables = unique(programGrants.flatMap(g => g.deliverables));
+    return {id,label,grants:programGrants,staff,sites,deliverables};
+  }).filter(p => p.grants.length || p.staff.length);
+
+  const siteRows = DATA.sites.map(site => {
+    const siteGrants = grants.filter(g => g.sites.includes(site));
+    const staff = DATA.staff.filter(p => p.sites.includes(site));
+    const programsAtSite = unique([...siteGrants.flatMap(g => g.programs), ...staff.flatMap(p => p.programs)]);
+    return {site,grants:siteGrants,staff,programsAtSite};
+  }).filter(row => row.grants.length || row.staff.length).map(row => `
+    <tr>
+      <td><strong>${esc(row.site)}</strong></td>
+      <td>${chips(row.programsAtSite)}</td>
+      <td>${row.grants.map(g => esc(g.name)).join('<br>') || '<span style="color:var(--ink4)">None mapped</span>'}</td>
+      <td>${row.staff.map(p => esc(p.name)).join('<br>') || '<span style="color:var(--ink4)">None mapped</span>'}</td>
+    </tr>
+  `).join('');
+
+  body.innerHTML = `
+    <div class="metric-grid">
+      ${metricCard(programs.length, 'mapped programs')}
+      ${metricCard(DATA.sites.length, 'mapped site groups')}
+      ${metricCard(unique(grants.flatMap(g => g.targets)).length, 'target populations')}
+      ${metricCard(unique(grants.flatMap(g => g.deliverables)).length, 'deliverables')}
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Program</th><th>People</th><th>Funding</th><th>Sites</th></tr></thead>
+        <tbody>
+          ${programs.map(p => `<tr>
+            <td><strong>${esc(p.label)}</strong></td>
+            <td>${p.staff.slice(0, 5).map(s => esc(s.name)).join('<br>') || (p.grants.length ? '<span style="color:var(--coral)">ACOE liaison TBD</span>' : '<span style="color:var(--ink4)">TBD</span>')}</td>
+            <td>${p.grants.map(g => esc(g.name)).join('<br>') || '<span style="color:var(--ink4)">TBD</span>'}</td>
+            <td>${p.sites.slice(0, 5).map(esc).join('<br>') || '<span style="color:var(--ink4)">TBD</span>'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <details class="advanced-block">
+      <summary>Show site crossover</summary>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Site / Scope</th><th>Programs</th><th>Funding</th><th>Staff</th></tr></thead>
+          <tbody>${siteRows}</tbody>
+        </table>
+      </div>
+    </details>
+  `;
+}
+
+function renderAgencyPortal() {
+  const body = document.getElementById('agency-portal-body');
+  if (!body) return;
+  const partnerRecords = currentWorkGrants().filter(g => fundingOwnerType(g) === 'partner');
+  const agencies = unique(partnerRecords.map(g => g.agency)).sort((a,b) => a.localeCompare(b));
+  body.innerHTML = `
+    <div class="metric-grid">
+      ${metricCard(agencies.length, 'partner agencies')}
+      ${metricCard(partnerRecords.length, 'partner records')}
+      ${metricCard(partnerRecords.filter(g => g.liaisonStatus === 'tbd').length, 'liaisons TBD')}
+      ${metricCard(unique(partnerRecords.flatMap(g => g.needs)).length, 'need areas')}
+    </div>
+    <div class="agency-grid">
+      ${agencies.map(agency => agencyCard(agency, partnerRecords.filter(g => g.agency === agency))).join('')}
+    </div>
+  `;
+}
+
+function agencyCard(agency, records) {
+  const needs = unique(records.flatMap(g => g.needs)).slice(0, 6);
+  const liaisons = unique(records.map(internalLiaison));
+  const tbdCount = records.filter(g => g.liaisonStatus === 'tbd').length;
+  return `
+    <div class="agency-card">
+      <h3>${esc(agency)}</h3>
+      <p>${records.length} partner record${records.length !== 1 ? 's' : ''}. ${tbdCount ? tbdCount + ' liaison still TBD.' : 'Possible liaison mapped, needs confirmation.'}</p>
+      <div class="quick-guide">
+        ${needs.map(id => `<span class="guide-pill">${esc(labelLookup[id] || id)}</span>`).join('')}
+      </div>
+      <div class="detail-grid">
+        <div class="detail-item"><div class="detail-label">Records</div><div class="detail-value">${records.map(g => esc(g.name)).join('<br>')}</div></div>
+        <div class="detail-item"><div class="detail-label">Possible ACOE Liaison</div><div class="detail-value">${liaisons.map(esc).join('<br>')}</div></div>
+        <div class="detail-item"><div class="detail-label">Validation</div><div class="detail-value">${records.map(g => `${esc(g.name)}: ${esc(validationLabel(g))}`).join('<br>')}</div></div>
+      </div>
+      ${feedbackLink(agency, 'Suggest agency liaison')}
+    </div>
+  `;
+}
+
+function renderGlossaryPortal() {
+  const body = document.getElementById('glossary-portal-body');
+  if (!body) return;
+  const terms = [
+    ['Funding record','A grant, partner funding stream, or public program record used to show possible work overlap.'],
+    ['Partner record','A record owned by an outside agency. It is useful for overlap discovery but not an ACOE-owned grant.'],
+    ['Internal liaison','The ACOE person or team who may know how ACOE connects to the outside agency or funding record.'],
+    ['Suggested starting point','The first person WorkMap recommends based on mapped signals. It is not a confirmed ownership decision.'],
+    ['Directly mapped','A record with a known local staff/funding relationship in the pilot data.'],
+    ['Likely overlap','A record or person sharing work signals such as site, population, deliverable, need, or program.'],
+    ['Needs validation','A partner, draft, unconfirmed, or owner-unknown record that must be checked before routing.'],
+    ['Deliverable','A concrete activity or product the work may be responsible for, such as coaching, data sharing, or family navigation.'],
+    ['Target population','The group the work is meant to serve, such as foster youth, English learners, early learners, or families.'],
+    ['Need category','The broad reason work overlaps, such as attendance, housing, re-entry, food security, or early learning.']
+  ];
+  body.innerHTML = `
+    <div class="glossary-grid">
+      ${terms.map(([term,definition]) => `
+        <div class="glossary-card">
+          <h3>${esc(term)}</h3>
+          <p>${esc(definition)}</p>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function renderAdminPortal() {
+  const body = document.getElementById('admin-portal-body');
+  if (!body) return;
+  body.innerHTML = `
+    <div class="metric-grid">
+      ${metricCard(DATA.grants.length, 'funding records')}
+      ${metricCard(DATA.staff.length, 'staff roles')}
+      ${metricCard(DATA.sites.length, 'site groups')}
+      ${metricCard(DATA.signals.reduce((sum,g) => sum + g.items.length, 0) + DATA.sites.length, 'routing signals')}
+    </div>
+    <div class="grid-two">
+      <div class="detail-item">
+        <div class="detail-label">Pilot limitations</div>
+        <div class="detail-value">
+          No login yet.<br>
+          Staff contacts are seeded from public ACOE pages and the org chart.<br>
+          Grant and partner record ownership must be validated internally before production routing.<br>
+          Email routing uses mailto drafts.<br>
+          County Coordination amount is TBD until a public award amount is confirmed.
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">Next backend step</div>
+        <div class="detail-value">
+          Move DATA into Google Sheets, Airtable, Supabase, or Postgres.<br>
+          Add ACOE-only authentication.<br>
+          Add request history and audit trail.
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:1rem">
+      <div class="detail-label">Pilot JSON seed</div>
+      <textarea class="admin-textarea" id="admin-json" readonly>${esc(JSON.stringify(DATA, null, 2))}</textarea>
+      <div class="btn-row">
+        <button class="btn-sec" onclick="copyPilotJson()">Copy JSON</button>
+        <button class="btn-sec" onclick="showData()">View Source Table</button>
+      </div>
+    </div>
+  `;
+}
+
+function reasonTags(reasons, limit) {
+  const shown = reasons.slice(0, limit || 5);
+  return shown.map(r => `<span class="tag" style="background:${tagColor(r.key,'bg')};color:${tagColor(r.key,'fg')}">${esc(r.label)}</span>`).join('');
+}
+
+function reasonText(reasons) {
+  if (!reasons.length) return 'Priority role match from selected context.';
+  return reasons.map(r => r.label).join(', ');
+}
+
+function reasonBullets(reasons, limit) {
+  const shown = (reasons || []).slice(0, limit || 4);
+  if (!shown.length) return '<span style="color:var(--ink4)">General program match.</span>';
+  return `<ul class="why-list">${shown.map(r => `<li>${esc(r.label)}</li>`).join('')}</ul>`;
+}
+
+function hasAny(values, set) {
+  return values && values.some(value => set.has(value));
+}
+
+function staffRelationshipLabels(person) {
+  const labels = [];
+  const roleMap = {
+    'program-lead':'Program lead',
+    'grant-lead':'Grant owner',
+    'data-lead':'Data / reporting',
+    'director':'Director',
+    'executive-sponsor':'Executive sponsor',
+    'technical-assistance':'Provides TA',
+    'case-manager':'Case management',
+    'site-liaison':'Site liaison',
+    'compliance-lead':'Compliance',
+    'specialist':'Specialist support'
+  };
+  if (roleMap[person.roleKey]) labels.push(roleMap[person.roleKey]);
+  if (hasAny(person.grants, selected.grants)) labels.push('Funding-linked');
+  if (hasAny(person.oversightGrants, selected.grants)) labels.push('Oversight/reference');
+  if (hasAny(person.programs, selected.programs)) labels.push('Supports program');
+  if (hasAny(person.sites, selected.sites)) labels.push('Serves site/scope');
+  if (hasAny(person.deliverables, selected.deliverables)) labels.push('Touches deliverable');
+  if (hasAny(person.targets, selected.targets)) labels.push('Serves population');
+  return unique(labels).slice(0, 5);
+}
+
+function relationshipBadges(labels) {
+  return labels.map(label => `<span class="relationship-tag">${esc(label)}</span>`).join('');
+}
+
+function tagColor(key, part) {
+  const map = {
+    needs:['#FDEEE9','#C94F2A'],
+    targets:['#EDE7F8','#5E3A8A'],
+    deliverables:['#FEF3D8','#C8860A'],
+    programs:['#D0F4EE','#085566'],
+    grants:['#E4F3EB','#2D7A4E'],
+    roles:['#EEF2F6','#3D5166'],
+    sites:['#E6F1F5','#0B7691']
+  };
+  return map[key] ? map[key][part === 'bg' ? 0 : 1] : '#EEF2F6';
+}
+
+function routeCard(primary, cc, finalView) {
+  const relationships = staffRelationshipLabels(primary);
+  return `
+    <div class="route-card">
+      <div class="route-label">${finalView ? 'Suggested email route' : 'Suggested starting point'}</div>
+      <div class="route-name">${esc(primary.name)}</div>
+      <div class="route-meta">${esc(primary.role)} | ${esc(primary.email)}</div>
+      <div class="route-reason">
+        <strong>Why suggested:</strong> ${esc(reasonText(primary.reasons))}<br>
+        <strong>Loop in:</strong> ${cc.length ? cc.map(p => esc(p.name)).join(', ') : 'No additional stakeholders from these signals.'}
+      </div>
+      <div class="route-actions">
+        <a class="route-btn" href="mailto:${esc(primary.email)}">Email suggested contact</a>
+        <button class="route-btn" onclick="goStep(4)">Prepare email</button>
+      </div>
+    </div>
+  `;
+}
+
+function staffCard(person) {
+  const reasons = person.reasons || overlapReasons(person);
+  const tagsHtml = reasons.length ? reasonTags(reasons, 4) : chips(person.programs.slice(0, 3));
+  const relationships = staffRelationshipLabels(person);
+  const mappedGrants = grantsForDisplay(person);
+  const match = staffMatchLabel(person);
+  return `
+    <div class="match-card">
+      <div class="match-top">
+        <div class="match-icon" style="background:var(--teal-l);color:var(--teal2)">ST</div>
+        <div class="match-info">
+          <div class="match-name">${esc(person.name)}</div>
+          <div class="match-tagline">${esc(person.role)}</div>
+          <div class="match-tags">${tagsHtml}</div>
+        </div>
+        <div class="match-status">
+          <span class="pill ${match.tone}">${esc(match.label)}</span>
+        </div>
+      </div>
+      <div class="match-detail">
+        <div class="detail-grid">
+          <div class="detail-item"><div class="detail-label">Why They Appear</div><div class="detail-value">${reasonBullets(reasons, 5)}</div></div>
+          <div class="detail-item"><div class="detail-label">Mapped Funding</div><div class="detail-value">${chips(mappedGrants)}</div></div>
+          <div class="detail-item"><div class="detail-label">Contact</div><div class="detail-value"><a style="color:var(--teal)" href="mailto:${esc(person.email)}">${esc(person.email)}</a><br>${esc(person.phone)}<br>${feedbackLink(person.name, 'Report wrong staff match')}</div></div>
+        </div>
+        <details class="card-details">
+          <summary>More about this match</summary>
+          <div class="detail-grid">
+            <div class="detail-item"><div class="detail-label">Programs</div><div class="detail-value">${chips(person.programs)}</div></div>
+            <div class="detail-item"><div class="detail-label">Relationship Type</div><div class="detail-value"><div class="relationship-tags">${relationshipBadges(relationships)}</div></div></div>
+            <div class="detail-item"><div class="detail-label">Sites</div><div class="detail-value">${person.sites.map(esc).join('<br>')}</div></div>
+            <div class="detail-item"><div class="detail-label">Source / Validation</div><div class="detail-value">${sourceLink(person)}<br>${esc(person.validation || 'Validation note TBD')}</div></div>
+          </div>
+        </details>
+      </div>
+    </div>
+  `;
+}
+
+function grantCard(grant) {
+  const reasons = grant.reasons || overlapReasons(grant);
+  const tagsHtml = reasons.length ? reasonTags(reasons, 4) : chips(grant.programs.slice(0, 3));
+  const match = grantMatchLabel(grant);
+  const ownerType = fundingOwnerType(grant);
+  const icon = ownerType === 'partner' ? 'PT' : 'FD';
+  const iconStyle = ownerType === 'partner' ? 'background:var(--purple-l);color:var(--purple)' : 'background:var(--gold-l);color:var(--gold)';
+  return `
+    <div class="match-card">
+      <div class="match-top">
+        <div class="match-icon" style="${iconStyle}">${icon}</div>
+        <div class="match-info">
+          <div class="match-name">${esc(grant.name)}</div>
+          <div class="match-tagline">${esc(grant.agency || 'ACOE')} | ${esc(grant.status || 'status needs validation')} | ${esc(grant.fiscalYear || 'Fiscal year TBD')}</div>
+          <div class="match-tags">${tagsHtml}</div>
+        </div>
+        <div class="match-status">
+          <span class="pill ${match.tone}">${esc(match.label)}</span>
+        </div>
+      </div>
+      <div class="match-detail">
+        <div class="detail-grid">
+          <div class="detail-item"><div class="detail-label">Mapped Staff / Why</div><div class="detail-value">${grantStaffList(grant.id)}</div></div>
+          <div class="detail-item"><div class="detail-label">Internal Liaison</div><div class="detail-value">${esc(internalLiaison(grant))}</div></div>
+          <div class="detail-item"><div class="detail-label">Validation</div><div class="detail-value">${esc(validationLabel(grant))}<br>${feedbackLink(grant.name, 'Report wrong funding match')}</div></div>
+          <div class="detail-item"><div class="detail-label">Top Signals</div><div class="detail-value">${chips(unique([...grant.programs, ...grant.targets, ...grant.deliverables]).slice(0, 6))}</div></div>
+        </div>
+        <details class="card-details">
+          <summary>More about this record</summary>
+          <div class="detail-grid">
+            <div class="detail-item"><div class="detail-label">Agency</div><div class="detail-value">${esc(grant.agency || 'ACOE')}</div></div>
+            <div class="detail-item"><div class="detail-label">Funding</div><div class="detail-value">${esc(grant.funding)}</div></div>
+            <div class="detail-item"><div class="detail-label">Allowables</div><div class="detail-value">${grant.allowables.map(esc).join('<br>')}</div></div>
+            <div class="detail-item"><div class="detail-label">Targets</div><div class="detail-value">${chips(grant.targets)}</div></div>
+            <div class="detail-item"><div class="detail-label">Deliverables</div><div class="detail-value">${chips(grant.deliverables)}</div></div>
+            <div class="detail-item"><div class="detail-label">Sites</div><div class="detail-value">${grant.sites.map(esc).join('<br>')}</div></div>
+            <div class="detail-item"><div class="detail-label">Review Fields</div><div class="detail-value">${validationDetails(grant).map(([label,value]) => `<strong>${esc(label)}:</strong> ${esc(value)}`).join('<br>')}</div></div>
+            <div class="detail-item"><div class="detail-label">Source</div><div class="detail-value">${sourceLink(grant)}<br>${esc(grant.verificationNote || '')}</div></div>
+          </div>
+        </details>
+      </div>
+    </div>
+  `;
+}
+
+function chips(ids) {
+  const values = ids || [];
+  if (!values.length) return '<span style="color:var(--ink4)">None mapped</span>';
+  return values.map(id => `<span class="pill teal">${esc(labelLookup[id] || id)}</span>`).join(' ');
+}
+
+function feedbackLink(subject, label) {
+  const mailSubject = encodeURIComponent('ACOE WorkMap correction: ' + subject);
+  const body = encodeURIComponent(`Please review this WorkMap item:\n\n${subject}\n\nCorrection or feedback:\n`);
+  return `<a class="feedback-link" href="mailto:gbrown@acoe.org?subject=${mailSubject}&body=${body}">${esc(label || 'Suggest correction')}</a>`;
+}
+
+function renderStaffTable(staff) {
+  document.getElementById('staff-table').innerHTML = `
+    <table>
+      <thead><tr><th>Staff</th><th>Role</th><th>Match Type</th><th>Relationship</th><th>Why They Appear</th><th>Programs</th><th>Funding</th><th>Notify</th></tr></thead>
+      <tbody>
+        ${staff.map((p,i) => {
+          const isPrimary = lastResults.primary && lastResults.primary.id === p.id;
+          const isCc = lastResults.cc.some(c => c.id === p.id);
+          const match = staffMatchLabel(p);
+          return `<tr>
+          <td><strong>${esc(p.name)}</strong><br><span style="color:var(--ink4)">${esc(p.email)}</span></td>
+          <td>${esc(p.role)}</td>
+          <td><span class="pill ${match.tone}">${esc(match.label)}</span></td>
+          <td>${staffRelationshipLabels(p).map(label => `<span class="pill gold">${esc(label)}</span>`).join('')}</td>
+          <td>${reasonBullets(p.reasons, 4)}</td>
+          <td>${chips(p.programs)}</td>
+          <td>${chips(grantsForDisplay(p))}</td>
+          <td>${isPrimary ? '<span class="pill green">Primary</span>' : isCc ? '<span class="pill gold">CC</span>' : '<span class="pill">Reference</span>'}</td>
+        </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderGrantTable(grants) {
+  document.getElementById('grant-table').innerHTML = `
+    <table>
+      <thead><tr><th>Record</th><th>Agency</th><th>Funding</th><th>Status</th><th>Match Type</th><th>Allowables</th><th>Targets</th><th>Deliverables</th><th>Sites</th><th>Internal Liaison</th><th>Mapped Staff / Why</th><th>Source</th></tr></thead>
+      <tbody>
+        ${grants.map(g => {
+          const match = grantMatchLabel(g);
+          return `<tr>
+          <td><strong>${esc(g.name)}</strong><br><span style="color:var(--ink4)">${esc(g.fiscalYear || '')}</span></td>
+          <td>${esc(g.agency || 'ACOE')}</td>
+          <td>${esc(g.funding)}</td>
+          <td>${statusBadge(g)}<br><span style="color:var(--ink4)">${esc(g.lastVerified ? 'Verified ' + g.lastVerified : 'Verification date TBD')}</span></td>
+          <td><span class="pill ${match.tone}">${esc(match.label)}</span></td>
+          <td>${g.allowables.map(esc).join('<br>')}</td>
+          <td>${chips(g.targets)}</td>
+          <td>${chips(g.deliverables)}</td>
+          <td>${g.sites.map(esc).join('<br>')}</td>
+          <td>${esc(internalLiaison(g))}<br><span style="color:var(--ink4)">${esc(validationDetailsText(g))}</span></td>
+          <td>${grantStaffList(g.id)}</td>
+          <td>${sourceLink(g)}</td>
+        </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function prepareRoute() {
+  if (!lastResults.primary) {
+    lastResults = calculateResults();
+  }
+  const {primary, cc, grants, staff} = lastResults;
+  if (!primary) {
+    document.getElementById('route-final').innerHTML = '<div class="empty-state">No suggested starting point is available yet. Go back and select overlap signals.</div>';
+    return;
+  }
+  document.getElementById('route-final').innerHTML = routeCard(primary, cc, true);
+  const urgency = document.getElementById('scope-urgency').value;
+  const requester = document.getElementById('requester-name').value || 'Requester';
+  const requesterEmail = document.getElementById('requester-email').value || '';
+  const site = document.getElementById('scope-site').value || 'Not specified';
+  const context = document.getElementById('scope-context').value || 'No additional context provided.';
+  document.getElementById('email-urgency').value = urgency;
+  document.getElementById('email-subject').value = `ACOE WorkMap request: ${urgency} overlap outreach`;
+  document.getElementById('email-body').value =
+`Hi ${primary.name},
+
+WorkMap suggested you as a starting point for this ${urgency} request based on mapped overlap. Please verify ownership before acting on partner or unvalidated funding records.
+
+Requester: ${requester}${requesterEmail ? ' <' + requesterEmail + '>' : ''}
+Primary site: ${site}
+
+Context:
+${context}
+
+Why suggested:
+${primary.note}
+
+Matched overlap signals:
+${reasonText(primary.reasons)}
+
+Related stakeholders to loop in:
+${cc.length ? cc.map(p => p.name + ' - ' + p.role).join('\n') : 'None recommended from the current signals.'}
+
+Related funding records:
+${grants.slice(0,5).map(g => g.name + ' - ' + (g.agency || 'ACOE') + ' - ' + validationLabel(g) + ' - Liaison: ' + internalLiaison(g)).join('\n')}
+
+Related staff matches:
+${staff.slice(0,6).map(p => {
+  const match = staffMatchLabel(p);
+  return p.name + ' - ' + p.role + ' - ' + match.label;
+}).join('\n')}
+
+Thank you.`;
+}
+
+function sendEmail() {
+  const primary = lastResults.primary;
+  if (!primary) return;
+  const cc = lastResults.cc.map(p => p.email).join(',');
+  const subject = encodeURIComponent(document.getElementById('email-subject').value);
+  const body = encodeURIComponent(document.getElementById('email-body').value);
+  const ccPart = cc ? `&cc=${encodeURIComponent(cc)}` : '';
+  window.location.href = `mailto:${encodeURIComponent(primary.email)}?subject=${subject}${ccPart}&body=${body}`;
+}
+
+function copyPilotJson() {
+  const text = JSON.stringify(DATA, null, 2);
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => toast('Pilot JSON copied')).catch(() => toast('Select the JSON text and copy manually'));
+    return;
+  }
+  const field = document.getElementById('admin-json');
+  if (field) field.select();
+  toast('Select the JSON text and copy manually');
+}
+
+function showData() {
+  allPanels().forEach(id => document.getElementById(id).classList.add('hidden'));
+  document.getElementById('steps-bar').classList.add('hidden');
+  document.querySelectorAll('.portal-btn').forEach(btn => btn.classList.remove('active'));
+  const adminBtn = document.getElementById('pbtn-admin');
+  if (adminBtn) adminBtn.classList.add('active');
+  document.getElementById('data-view').classList.remove('hidden');
+  document.getElementById('data-table').innerHTML = `
+    <table>
+      <thead><tr><th>Type</th><th>Name</th><th>Key Fields</th><th>Source</th></tr></thead>
+      <tbody>
+        ${DATA.staff.map(p => `<tr><td>Staff</td><td><strong>${esc(p.name)}</strong><br>${esc(p.role)}</td><td>Programs: ${chips(p.programs)}<br>Mapped funding: ${chips(grantsForDisplay(p))}<br>Sites: ${p.sites.map(esc).join(', ')}<br>Validation: ${esc(p.validation || 'Validation note TBD')}</td><td>${sourceLink(p)}</td></tr>`).join('')}
+        ${DATA.grants.map(g => `<tr><td>Funding</td><td><strong>${esc(g.name)}</strong><br>${esc(g.funding)}</td><td>Agency: ${esc(g.agency || 'ACOE')}<br>Status: ${statusBadge(g)}<br>Internal liaison: ${esc(internalLiaison(g))}<br>Use for routing: ${esc(g.routingApproved ? 'Yes' : 'No - validate first')}<br>Programs: ${chips(g.programs)}<br>Targets: ${chips(g.targets)}<br>Deliverables: ${chips(g.deliverables)}<br>Mapped staff: ${grantStaff(g.id).map(p => esc(p.name)).join(', ') || 'Needs owner validation'}<br>Verification: ${esc(g.verificationNote || 'Verification note TBD')}</td><td>${sourceLink(g)}</td></tr>`).join('')}
+      </tbody>
+    </table>
+  `;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function hideData() {
+  document.getElementById('data-view').classList.add('hidden');
+  goStep(1);
+}
+
+function toast(msg) {
+  let t = document.getElementById('_toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = '_toast';
+    t.style.cssText = 'position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(60px);background:var(--ink2);color:white;padding:9px 20px;border-radius:var(--pill);font-size:.82rem;font-weight:700;font-family:var(--sans);box-shadow:0 4px 20px rgba(0,0,0,.2);transition:transform .25s,opacity .25s;opacity:0;z-index:1000;pointer-events:none;white-space:nowrap';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateX(-50%) translateY(60px)';
+  }, 2200);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
