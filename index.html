@@ -4,168 +4,258 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ACOE WorkMap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--teal:#0b7691;--teal2:#0a6880;--teal-l:#e8f5f9;--gold:#b07d2a;--gold-l:#fdf3e3;--coral:#c0392b;--coral-l:#fdecea;--green:#1a7a4a;--green-l:#e8f5ee;--purple:#6b3fa0;--purple-l:#f3eefa;--ink:#1a1a2e;--ink3:#555;--ink4:#888;--border:#e2e6ea;--border2:#cdd3da;--slate-l:#f7f9fb;--bg:#f4f6f9;--r:12px;--pill:99px;--sh:0 1px 4px rgba(0,0,0,.08);--sh-h:0 4px 16px rgba(0,0,0,.13)}
+:root{
+  --ink:#16242d;--ink2:#2c3e4a;--ink3:#52646f;--ink4:#8595a0;
+  --paper:#fcfbf8;--sand:#f0ede6;--sand2:#e6e1d6;
+  --torch:#e4572e;--torch-d:#c44623;--torch-l:#fdeee8;
+  --teal:#0e6e7e;--teal-l:#e3f0f2;
+  --green:#2c6e49;--green-l:#e8f2ec;
+  --gold:#9a6d1b;--gold-l:#f7efdd;
+  --line:rgba(22,36,45,.16);--line2:rgba(22,36,45,.32);
+  --rail-w:212px;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Georgia,serif;background:var(--bg);color:var(--ink);min-height:100vh}
+html{scroll-behavior:smooth}
+body{font-family:'Public Sans',system-ui,sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;font-size:15px;line-height:1.55}
 a{color:var(--teal);text-decoration:none}
+a:hover{text-decoration:underline}
 button{cursor:pointer;font-family:inherit}
-.hdr{background:var(--teal);color:white;padding:.85rem 1.4rem;display:flex;align-items:center;gap:.75rem;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.hdr-logo{width:38px;height:38px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--teal);font-size:.85rem}
-.hdr-wordmark{font-size:1.15rem;font-weight:900;letter-spacing:-.02em}
-.hdr-wordmark span{opacity:.75;font-weight:400}
-.hdr-sub{font-size:.75rem;opacity:.8;margin-top:.05rem}
-.hdr-text{flex:1}
-.portal-nav{display:flex;gap:.4rem;padding:.7rem 1.4rem;background:white;border-bottom:1px solid var(--border);overflow-x:auto}
-.portal-btn{border:1px solid var(--border2);background:white;color:var(--ink3);border-radius:var(--pill);padding:.42rem .95rem;font-size:.8rem;font-weight:700;white-space:nowrap;transition:all .15s}
-.portal-btn:hover{border-color:var(--teal);color:var(--teal)}
-.portal-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
-.panel{max-width:900px;margin:0 auto;padding:1.2rem 1.4rem}
+::selection{background:var(--torch-l)}
+
+/* ── MASTHEAD ─────────────────────────────────── */
+.hdr{position:fixed;top:0;left:0;width:var(--rail-w);height:100vh;background:var(--ink);color:var(--paper);padding:1.5rem 1.25rem;display:flex;flex-direction:column;gap:0;z-index:100}
+.hdr-logo{width:42px;height:42px;border:2px solid var(--torch);border-radius:0;display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:900;color:var(--torch);font-size:.8rem;letter-spacing:.02em;margin-bottom:1rem}
+.hdr-text{margin-bottom:2rem}
+.hdr-wordmark{font-family:'Archivo',sans-serif;font-size:1.3rem;font-weight:800;letter-spacing:-.01em;line-height:1.1}
+.hdr-wordmark span{color:var(--torch);font-weight:800}
+.hdr-sub{font-size:.7rem;color:rgba(252,251,248,.55);margin-top:.5rem;line-height:1.5;text-transform:uppercase;letter-spacing:.08em}
+
+/* ── NAV (inside rail) ────────────────────────── */
+.portal-nav{display:flex;flex-direction:column;gap:0;background:transparent;border:none;padding:0;overflow:visible}
+.portal-btn{border:none;background:transparent;color:rgba(252,251,248,.65);border-left:2px solid transparent;border-radius:0;padding:.6rem .75rem;font-size:.84rem;font-weight:600;text-align:left;white-space:nowrap;transition:all .12s;font-family:'Public Sans',sans-serif}
+.portal-btn:hover{color:var(--paper);border-left-color:rgba(228,87,46,.4)}
+.portal-btn.active{background:rgba(228,87,46,.12);color:var(--paper);border-left-color:var(--torch)}
+.rail-foot{margin-top:auto;font-size:.66rem;color:rgba(252,251,248,.4);line-height:1.6}
+.rail-foot a{color:rgba(252,251,248,.6)}
+
+/* ── PANELS ───────────────────────────────────── */
+.panel{max-width:920px;margin:0 0 0 var(--rail-w);padding:3rem 3.5rem 4rem}
 .panel.hidden{display:none!important}
 .hidden{display:none!important}
-.panel-hdr{margin-bottom:1.2rem}
-.panel-hdr h2{font-size:1.3rem;font-weight:900;color:var(--ink);margin-bottom:.3rem}
-.panel-hdr p{font-size:.85rem;color:var(--ink3);line-height:1.55}
-.click-guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.55rem;margin:1rem 0}
-.click-guide button{background:white;border:1px solid var(--border);border-radius:9px;padding:.7rem;text-align:left;box-shadow:var(--sh);transition:all .15s}
-.click-guide button:hover{border-color:var(--teal);box-shadow:var(--sh-h);transform:translateY(-1px)}
-.click-guide-k{font-size:.62rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--ink4);margin-bottom:.15rem}
-.click-guide-v{font-size:.82rem;font-weight:900;color:var(--ink)}
-.home-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin:1rem 0}
-.home-action{background:white;border:1px solid var(--border);border-radius:var(--r);padding:1rem;text-align:left;box-shadow:var(--sh);transition:all .15s}
-.home-action.primary{background:var(--teal-l);border-color:rgba(11,118,145,.3);grid-column:span 2}
-@media(max-width:600px){.home-action.primary{grid-column:auto}}
-.home-action:hover{transform:translateY(-2px);box-shadow:var(--sh-h)}
-.home-action-kicker{font-size:.62rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--teal);margin-bottom:.3rem}
-.home-action-title{font-size:1rem;font-weight:900;color:var(--ink);margin-bottom:.3rem}
-.home-action-copy{font-size:.8rem;color:var(--ink3);line-height:1.5}
-.advanced-block{border:1px solid var(--border);border-radius:var(--r);margin-bottom:.7rem;background:white}
-.advanced-block summary{padding:.65rem .85rem;font-size:.82rem;font-weight:700;color:var(--ink3);cursor:pointer;list-style:none;display:flex;align-items:center;gap:.4rem}
-.advanced-block summary::before{content:'▶';font-size:.6rem;transition:transform .2s}
-.advanced-block[open] summary::before{transform:rotate(90deg)}
-.lane-body{padding:.65rem}
-.work-search{display:flex;gap:.5rem;align-items:center;margin:.75rem 0 1rem}
-.work-search input{flex:1;border:1px solid var(--border2);border-radius:var(--pill);padding:.5rem .9rem;font-size:.85rem;font-family:inherit;outline:none;background:white}
-.work-search input:focus{border-color:var(--teal)}
-.work-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem;margin-bottom:1.2rem}
-.work-card{background:white;border:1px solid var(--border);border-radius:var(--r);padding:.85rem;cursor:pointer;box-shadow:var(--sh);transition:all .15s}
-.work-card:hover{border-color:var(--teal);box-shadow:var(--sh-h);transform:translateY(-2px)}
-.work-card.selected{border-color:var(--teal);background:var(--teal-l)}
-.work-card-title{font-size:.92rem;font-weight:900;color:var(--ink);margin-bottom:.25rem}
-.work-card-copy{font-size:.76rem;color:var(--ink3);line-height:1.45;margin-bottom:.5rem}
-.relationship-tags{display:flex;flex-wrap:wrap;gap:.3rem}
-.relationship-tag{font-size:.62rem;font-weight:900;border-radius:4px;padding:2px 7px;background:var(--gold-l);color:var(--gold)}
-.relationship-tag.warn{background:var(--coral-l);color:var(--coral)}
-.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
-@media(max-width:680px){.results-grid{grid-template-columns:1fr}}
-.results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem}
-.results-header h3{font-size:.9rem;font-weight:900;color:var(--ink)}
-.match-card{background:white;border:1px solid var(--border);border-radius:var(--r);padding:.85rem;margin-bottom:.6rem;box-shadow:var(--sh)}
-.match-top{display:flex;gap:.65rem;align-items:flex-start;margin-bottom:.5rem}
-.match-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:900;flex-shrink:0}
-.match-info{flex:1}
-.match-name{font-size:.88rem;font-weight:900;color:var(--ink)}
-.match-tagline{font-size:.72rem;color:var(--ink4);margin-top:.1rem}
-.match-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin:.4rem 0}
-.card-details summary{font-size:.75rem;color:var(--teal);cursor:pointer;font-weight:700;list-style:none;margin-top:.4rem}
-.card-details[open] summary{margin-bottom:.5rem}
-.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
-@media(max-width:480px){.detail-grid{grid-template-columns:1fr}}
-.detail-label{font-size:.62rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--ink4);margin-bottom:.15rem}
-.detail-value{font-size:.78rem;color:var(--ink);line-height:1.45}
-.route-card{background:var(--teal-l);border:1px solid rgba(11,118,145,.25);border-radius:var(--r);padding:1rem;margin-bottom:1rem}
-.route-label{font-size:.65rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--teal);margin-bottom:.3rem}
-.route-name{font-size:1.05rem;font-weight:900;color:var(--ink)}
-.route-role{font-size:.8rem;color:var(--ink3);margin:.1rem 0 .5rem}
-.route-reason{font-size:.78rem;color:var(--ink3);line-height:1.5;margin-bottom:.7rem}
-.route-actions{display:flex;gap:.5rem;flex-wrap:wrap}
-.route-btn{background:var(--teal);color:white;border:none;border-radius:var(--pill);padding:.42rem .95rem;font-size:.8rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;cursor:pointer}
-.route-btn:hover{background:var(--teal2)}
-.pill{display:inline-block;border-radius:var(--pill);padding:2px 9px;font-size:.68rem;font-weight:700}
+.panel-hdr{margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:2px solid var(--ink)}
+.panel-hdr h2{font-family:'Archivo',sans-serif;font-size:1.9rem;font-weight:800;letter-spacing:-.02em;color:var(--ink);margin-bottom:.4rem;line-height:1.1}
+.panel-hdr p{font-size:.92rem;color:var(--ink3);max-width:58ch}
+
+/* ── HERO QUESTION (signature) ────────────────── */
+.hero-q{font-family:'Archivo',sans-serif;font-weight:800;font-size:clamp(1.9rem,4.2vw,3rem);letter-spacing:-.025em;line-height:1.12;color:var(--ink);margin-bottom:.75rem}
+.hero-q .blank{color:var(--torch);border-bottom:4px solid var(--torch);padding:0 .25em;font-style:normal;white-space:nowrap}
+.hero-sub{font-size:.95rem;color:var(--ink3);max-width:60ch;margin-bottom:2.25rem}
+.hero-note{display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--gold);background:var(--gold-l);padding:.3rem .7rem;margin-bottom:2.5rem;border-left:3px solid var(--gold)}
+
+/* ── QUICK ROUTES ─────────────────────────────── */
+.click-guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0;margin:0 0 2.5rem;border:1px solid var(--line2)}
+.click-guide button{background:var(--paper);border:none;border-right:1px solid var(--line);padding:1rem;text-align:left;transition:background .12s}
+.click-guide button:last-child{border-right:none}
+.click-guide button:hover{background:var(--sand)}
+.click-guide-k{font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--torch);margin-bottom:.3rem}
+.click-guide-v{font-size:.86rem;font-weight:700;color:var(--ink);font-family:'Archivo',sans-serif}
+
+/* ── WORK AREA LIST (the answers) ─────────────── */
+.work-search{margin:0 0 1.25rem}
+.work-search input{width:100%;border:none;border-bottom:2px solid var(--line2);background:transparent;padding:.6rem .1rem;font-size:1rem;font-family:inherit;outline:none;color:var(--ink)}
+.work-search input:focus{border-bottom-color:var(--torch)}
+.work-search input::placeholder{color:var(--ink4)}
+.work-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:2rem;border-top:1px solid var(--line2)}
+@media(max-width:760px){.work-grid{grid-template-columns:1fr}}
+.work-card{background:transparent;border:none;border-bottom:1px solid var(--line);padding:1.1rem .25rem 1.1rem 0;cursor:pointer;transition:all .12s;position:relative}
+.work-card:nth-child(odd){padding-right:1.5rem}
+.work-card:nth-child(even){padding-left:1.5rem;border-left:1px solid var(--line)}
+@media(max-width:760px){.work-card:nth-child(even){padding-left:0;border-left:none}.work-card:nth-child(odd){padding-right:.25rem}}
+.work-card:hover .work-card-title{color:var(--torch)}
+.work-card.selected{background:var(--torch-l)}
+.work-card.selected .work-card-title{color:var(--torch-d)}
+.work-card-title{font-family:'Archivo',sans-serif;font-size:1.02rem;font-weight:700;color:var(--ink);margin-bottom:.3rem;transition:color .12s;letter-spacing:-.01em}
+.work-card-copy{font-size:.8rem;color:var(--ink3);line-height:1.5;margin-bottom:.5rem}
+.relationship-tags{display:flex;flex-wrap:wrap;gap:.6rem}
+.relationship-tag{font-size:.66rem;font-weight:600;color:var(--ink4);background:none;padding:0;letter-spacing:.02em}
+.relationship-tag.warn{color:var(--torch-d)}
+.relationship-tag::before{content:'·';margin-right:.35rem;color:var(--line2)}
+.relationship-tag:first-child::before{content:''}
+
+/* ── ADVANCED ─────────────────────────────────── */
+.advanced-block{border:1px solid var(--line);margin-bottom:1rem;background:var(--paper)}
+.advanced-block summary{padding:.7rem .9rem;font-size:.8rem;font-weight:700;color:var(--ink3);cursor:pointer;list-style:none;display:flex;align-items:center;gap:.5rem;text-transform:uppercase;letter-spacing:.06em}
+.advanced-block summary::before{content:'+';font-weight:800;color:var(--torch);font-size:.95rem;transition:transform .15s}
+.advanced-block[open] summary::before{content:'−'}
+.lane-body{padding:.85rem}
+
+/* ── RESULTS / THE TABLE ──────────────────────── */
+.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;margin-top:1.5rem}
+@media(max-width:760px){.results-grid{grid-template-columns:1fr;gap:1.5rem}}
+.results-header{margin-bottom:.9rem;padding-bottom:.5rem;border-bottom:2px solid var(--ink)}
+.results-header h3{font-family:'Archivo',sans-serif;font-size:.85rem;font-weight:800;color:var(--ink);text-transform:uppercase;letter-spacing:.09em}
+
+/* ── CARDS ────────────────────────────────────── */
+.match-card{background:var(--paper);border:none;border-bottom:1px solid var(--line);padding:1rem 0;margin:0}
+.match-top{display:flex;gap:.8rem;align-items:flex-start;margin-bottom:.45rem}
+.match-icon{width:38px;height:38px;border-radius:0;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0;font-family:'Archivo',sans-serif;border:1px solid var(--line2)}
+.match-info{flex:1;min-width:0}
+.match-name{font-family:'Archivo',sans-serif;font-size:.96rem;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+.match-tagline{font-size:.74rem;color:var(--ink3);margin-top:.15rem}
+.match-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin:.45rem 0 .2rem}
+.card-details summary{font-size:.74rem;color:var(--torch-d);cursor:pointer;font-weight:700;list-style:none;margin-top:.4rem;text-transform:uppercase;letter-spacing:.05em}
+.card-details summary:hover{color:var(--torch)}
+.card-details[open] summary{margin-bottom:.6rem}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;background:var(--sand);padding:.85rem;border-left:3px solid var(--torch)}
+@media(max-width:520px){.detail-grid{grid-template-columns:1fr}}
+.detail-label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink4);margin-bottom:.2rem}
+.detail-value{font-size:.79rem;color:var(--ink2);line-height:1.5}
+
+/* ── ROUTE / FIRST SEAT ───────────────────────── */
+.route-card{background:var(--ink);color:var(--paper);padding:1.5rem;margin-bottom:1.75rem;position:relative}
+.route-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--torch)}
+.route-label{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--torch);margin-bottom:.5rem}
+.route-name{font-family:'Archivo',sans-serif;font-size:1.35rem;font-weight:800;letter-spacing:-.01em}
+.route-role{font-size:.84rem;color:rgba(252,251,248,.7);margin:.2rem 0 .7rem}
+.route-reason{font-size:.8rem;color:rgba(252,251,248,.78);line-height:1.6;margin-bottom:1rem}
+.route-reason strong{color:var(--paper)}
+.route-actions{display:flex;gap:.6rem;flex-wrap:wrap}
+.route-btn{background:var(--torch);color:#fff;border:none;border-radius:0;padding:.55rem 1.1rem;font-size:.8rem;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;cursor:pointer;font-family:'Public Sans',sans-serif;letter-spacing:.02em}
+.route-btn:hover{background:var(--torch-d);text-decoration:none}
+
+/* ── PILLS & CHIPS ────────────────────────────── */
+.pill{display:inline-block;border-radius:0;padding:2px 8px;font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
 .pill.green{background:var(--green-l);color:var(--green)}
 .pill.teal{background:var(--teal-l);color:var(--teal)}
 .pill.gold{background:var(--gold-l);color:var(--gold)}
-.chip{display:inline-block;background:var(--slate-l);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:.66rem;color:var(--ink3);margin:1px}
-.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.55rem;margin-bottom:.85rem}
-.metric-card{background:white;border:1px solid var(--border);border-radius:var(--r);padding:.75rem;text-align:center;box-shadow:var(--sh)}
-.metric-val{font-size:1.5rem;font-weight:900;color:var(--teal)}
-.metric-label{font-size:.68rem;color:var(--ink4);margin-top:.1rem}
-.filter-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.6rem;margin:.8rem 0 1rem;background:var(--slate-l);border:1px solid var(--border);border-radius:var(--r);padding:.75rem}
-.filter-field{display:flex;flex-direction:column;gap:.25rem}
-.filter-field label{font-size:.62rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--ink4)}
-.filter-field select{border:1px solid var(--border2);border-radius:8px;background:white;color:var(--ink);padding:.45rem .6rem;font-size:.82rem;outline:none;font-family:inherit}
-.lane-block{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:.7rem;background:white}
-.lane-hdr{display:flex;align-items:center;justify-content:space-between;gap:.5rem;background:var(--slate-l);padding:.55rem .75rem;border-bottom:1px solid var(--border)}
-.lane-title{font-size:.8rem;font-weight:900;color:var(--ink)}
-.lane-copy{font-size:.73rem;color:var(--ink3)}
-.agency-grid,.glossary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.75rem}
-.agency-card,.glossary-card{background:white;border:1px solid var(--border);border-radius:var(--r);padding:.85rem;box-shadow:var(--sh)}
-.agency-card h3,.glossary-card h3{font-size:.95rem;font-weight:900;color:var(--ink);margin-bottom:.3rem}
-.agency-card p,.glossary-card p{font-size:.8rem;color:var(--ink3);line-height:1.5;margin-bottom:.5rem}
-.quick-guide{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0}
-.guide-pill{background:var(--slate-l);border:1px solid var(--border);border-radius:var(--pill);padding:3px 10px;font-size:.72rem;color:var(--ink3)}
-.feedback-link{display:inline-flex;align-items:center;border:1px solid var(--border2);border-radius:var(--pill);padding:3px 9px;margin-top:.45rem;color:var(--teal2);font-size:.72rem;font-weight:700;text-decoration:none;background:white}
-.feedback-link:hover{border-color:var(--teal);color:var(--teal)}
-.step-nav{display:flex;align-items:center;gap:.3rem;margin-bottom:1.2rem;padding:.7rem;background:white;border:1px solid var(--border);border-radius:var(--r)}
-.step{display:flex;align-items:center;gap:.35rem}
-.step-n{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:900}
-.step-n.active{background:var(--teal);color:white}
-.step-n.done{background:var(--green-l);color:var(--green)}
-.step-n.todo{background:var(--slate-l);color:var(--ink4)}
-.step-label{font-size:.72rem;font-weight:700;color:var(--ink3)}
-.step-line{flex:1;height:1px;background:var(--border)}
-.step-btns{display:flex;gap:.5rem;margin-top:1rem}
-.btn-sec{background:white;border:1px solid var(--border2);color:var(--ink3);border-radius:var(--pill);padding:.42rem .95rem;font-size:.8rem;font-weight:700}
-.btn-sec:hover{border-color:var(--teal);color:var(--teal)}
-.nav-btn{background:var(--teal);color:white;border:none;border-radius:var(--pill);padding:.42rem .95rem;font-size:.8rem;font-weight:700}
-.nav-btn:hover{background:var(--teal2)}
-.back-btn{background:white;border:1px solid var(--border2);color:var(--ink3);border-radius:var(--pill);padding:.42rem .95rem;font-size:.8rem;font-weight:700}
-.signal-section{margin-bottom:1rem}
-.signal-section h4{font-size:.8rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--ink4);margin-bottom:.5rem}
-.signal-grid{display:flex;flex-wrap:wrap;gap:.4rem}
-.signal-btn{border:1px solid var(--border2);background:white;color:var(--ink3);border-radius:var(--pill);padding:4px 12px;font-size:.77rem;font-weight:600;transition:all .12s}
-.signal-btn:hover{border-color:var(--teal);color:var(--teal)}
-.signal-btn.active{background:var(--teal);color:white;border-color:var(--teal)}
-.scope-form{display:grid;gap:.75rem}
-.scope-field label{display:block;font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--ink4);margin-bottom:.3rem}
-.scope-field select,.scope-field textarea,.scope-field input{width:100%;border:1px solid var(--border2);border-radius:8px;padding:.5rem .7rem;font-size:.85rem;font-family:inherit;outline:none;background:white}
-.scope-field select:focus,.scope-field textarea:focus,.scope-field input:focus{border-color:var(--teal)}
-.scope-field textarea{resize:vertical;min-height:80px}
-.email-preview{background:var(--slate-l);border:1px solid var(--border);border-radius:var(--r);padding:1rem;margin-top:1rem}
-.email-field{margin-bottom:.6rem}
-.email-field label{font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:var(--ink4);display:block;margin-bottom:.2rem}
-.email-field input,.email-field textarea{width:100%;border:1px solid var(--border2);border-radius:8px;padding:.45rem .65rem;font-size:.82rem;font-family:inherit;outline:none;background:white}
-.email-field textarea{min-height:180px;resize:vertical}
-.empty-state{text-align:center;padding:2rem;color:var(--ink4);font-size:.85rem;background:white;border:1px solid var(--border);border-radius:var(--r)}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:.78rem}
-th{background:var(--slate-l);padding:.5rem .65rem;text-align:left;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:var(--ink4);border-bottom:2px solid var(--border)}
-td{padding:.5rem .65rem;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink3)}
-tr:hover td{background:var(--slate-l)}
-.callout{background:var(--gold-l);border:1px solid rgba(176,125,42,.25);border-radius:var(--r);padding:.75rem .9rem;font-size:.8rem;color:var(--gold);line-height:1.5;margin:.5rem 0}
+.chip{display:inline-block;background:transparent;border:1px solid var(--line);border-radius:0;padding:1px 7px;font-size:.67rem;color:var(--ink3);margin:1px}
+
+/* ── METRICS ──────────────────────────────────── */
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0;margin-bottom:1.5rem;border:1px solid var(--line2)}
+.metric-card{background:var(--paper);border-right:1px solid var(--line);padding:1rem;text-align:left}
+.metric-card:last-child{border-right:none}
+.metric-val{font-family:'Archivo',sans-serif;font-size:1.7rem;font-weight:800;color:var(--ink);letter-spacing:-.02em}
+.metric-label{font-size:.66rem;color:var(--ink4);margin-top:.15rem;text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+
+/* ── FILTERS ──────────────────────────────────── */
+.filter-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1rem;margin:1rem 0 1.5rem;background:var(--sand);border:none;border-left:3px solid var(--ink);padding:1rem}
+.filter-field{display:flex;flex-direction:column;gap:.3rem}
+.filter-field label{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3)}
+.filter-field select{border:1px solid var(--line2);border-radius:0;background:var(--paper);color:var(--ink);padding:.5rem .6rem;font-size:.82rem;outline:none;font-family:inherit}
+.filter-field select:focus{border-color:var(--torch)}
+
+/* ── LANES ────────────────────────────────────── */
+.lane-block{border:1px solid var(--line2);margin-bottom:1rem;background:var(--paper)}
+.lane-hdr{display:flex;align-items:center;justify-content:space-between;gap:.5rem;background:var(--sand);padding:.65rem .85rem;border-bottom:1px solid var(--line)}
+details.lane-block summary{cursor:pointer;list-style:none}
+.lane-title{font-family:'Archivo',sans-serif;font-size:.82rem;font-weight:800;color:var(--ink);text-transform:uppercase;letter-spacing:.05em}
+.lane-copy{font-size:.72rem;color:var(--ink3)}
+.lane-block .lane-body .match-card{padding:1rem .25rem}
+
+/* ── AGENCY / GLOSSARY ────────────────────────── */
+.agency-grid,.glossary-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:2px solid var(--ink)}
+@media(max-width:760px){.agency-grid,.glossary-grid{grid-template-columns:1fr}}
+.agency-card,.glossary-card{background:transparent;border:none;border-bottom:1px solid var(--line);padding:1.25rem 1.5rem 1.25rem 0}
+.agency-card:nth-child(even),.glossary-card:nth-child(even){padding-left:1.5rem;padding-right:0;border-left:1px solid var(--line)}
+@media(max-width:760px){.agency-card:nth-child(even),.glossary-card:nth-child(even){padding-left:0;border-left:none}}
+.agency-card h3,.glossary-card h3{font-family:'Archivo',sans-serif;font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:.35rem;letter-spacing:-.01em}
+.agency-card p,.glossary-card p{font-size:.8rem;color:var(--ink3);line-height:1.55;margin-bottom:.5rem}
+
+/* ── GUIDE PILLS ──────────────────────────────── */
+.quick-guide{display:flex;flex-wrap:wrap;gap:.4rem;margin:.75rem 0}
+.guide-pill{background:transparent;border:1px solid var(--line);border-radius:0;padding:3px 10px;font-size:.72rem;color:var(--ink3)}
+
+/* ── FEEDBACK ─────────────────────────────────── */
+.feedback-link{display:inline-flex;align-items:center;border:none;border-bottom:1px solid var(--torch);padding:0 0 1px;margin-top:.5rem;color:var(--torch-d);font-size:.72rem;font-weight:700;text-decoration:none;background:none;text-transform:uppercase;letter-spacing:.05em}
+.feedback-link:hover{color:var(--torch);text-decoration:none}
+
+/* ── STEP FLOW ────────────────────────────────── */
+.step-nav{display:flex;align-items:center;gap:.4rem;margin-bottom:1.75rem;padding:0 0 1rem;background:transparent;border:none;border-bottom:1px solid var(--line2)}
+.step{display:flex;align-items:center;gap:.4rem}
+.step-n{width:26px;height:26px;border-radius:0;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;font-family:'Archivo',sans-serif}
+.step-n.active{background:var(--torch);color:#fff}
+.step-n.done{background:var(--ink);color:var(--paper)}
+.step-n.todo{background:var(--sand2);color:var(--ink4)}
+.step-label{font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
+.step-line{flex:1;height:1px;background:var(--line)}
+.step-btns{display:flex;gap:.7rem;margin-top:1.5rem}
+.btn-sec{background:transparent;border:1px solid var(--ink);color:var(--ink);border-radius:0;padding:.55rem 1.1rem;font-size:.8rem;font-weight:700}
+.btn-sec:hover{background:var(--sand)}
+.nav-btn{background:var(--ink);color:var(--paper);border:none;border-radius:0;padding:.55rem 1.2rem;font-size:.8rem;font-weight:700;letter-spacing:.02em}
+.nav-btn:hover{background:var(--torch)}
+.back-btn{background:transparent;border:1px solid var(--line2);color:var(--ink3);border-radius:0;padding:.55rem 1.1rem;font-size:.8rem;font-weight:700}
+.back-btn:hover{border-color:var(--ink);color:var(--ink)}
+
+/* ── SIGNALS ──────────────────────────────────── */
+.signal-section{margin-bottom:1.5rem}
+.signal-section h4{font-family:'Archivo',sans-serif;font-size:.76rem;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--ink);margin-bottom:.6rem;padding-bottom:.3rem;border-bottom:1px solid var(--line)}
+.signal-grid{display:flex;flex-wrap:wrap;gap:.45rem}
+.signal-btn{border:1px solid var(--line2);background:var(--paper);color:var(--ink3);border-radius:0;padding:5px 13px;font-size:.78rem;font-weight:600;transition:all .1s}
+.signal-btn:hover{border-color:var(--torch);color:var(--torch-d)}
+.signal-btn.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* ── SCOPE FORM ───────────────────────────────── */
+.scope-form{display:grid;gap:1.1rem;max-width:620px}
+.scope-field label{display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:.35rem}
+.scope-field select,.scope-field textarea,.scope-field input{width:100%;border:1px solid var(--line2);border-radius:0;padding:.6rem .75rem;font-size:.88rem;font-family:inherit;outline:none;background:var(--paper);color:var(--ink)}
+.scope-field select:focus,.scope-field textarea:focus,.scope-field input:focus{border-color:var(--torch)}
+.scope-field textarea{resize:vertical;min-height:90px}
+
+/* ── EMAIL ────────────────────────────────────── */
+.email-preview{background:var(--sand);border:none;border-left:3px solid var(--ink);padding:1.25rem;margin-top:1.25rem}
+.email-field{margin-bottom:.75rem}
+.email-field label{font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);display:block;margin-bottom:.25rem}
+.email-field input,.email-field textarea{width:100%;border:1px solid var(--line2);border-radius:0;padding:.5rem .7rem;font-size:.83rem;font-family:inherit;outline:none;background:var(--paper)}
+.email-field textarea{min-height:190px;resize:vertical}
+
+/* ── EMPTY / TABLES / CALLOUT ─────────────────── */
+.empty-state{text-align:left;padding:1.5rem;color:var(--ink3);font-size:.86rem;background:var(--sand);border:none;border-left:3px solid var(--ink4)}
+.table-wrap{overflow-x:auto;border:1px solid var(--line2)}
+table{width:100%;border-collapse:collapse;font-size:.79rem}
+th{background:var(--ink);color:var(--paper);padding:.6rem .7rem;text-align:left;font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+td{padding:.55rem .7rem;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2)}
+tr:hover td{background:var(--sand)}
+.callout{background:var(--gold-l);border:none;border-left:3px solid var(--gold);border-radius:0;padding:.8rem 1rem;font-size:.8rem;color:var(--gold);line-height:1.55;margin:.75rem 0;font-weight:500}
+
+/* ── MOBILE ───────────────────────────────────── */
+@media(max-width:900px){
+  .hdr{position:static;width:100%;height:auto;flex-direction:column;padding:1rem 1.25rem}
+  .hdr-text{margin-bottom:1rem}
+  .hdr-logo{margin-bottom:.6rem}
+  .portal-nav{flex-direction:row;overflow-x:auto;gap:.25rem;padding-bottom:.25rem}
+  .portal-btn{border-left:none;border-bottom:2px solid transparent;padding:.5rem .8rem;flex-shrink:0}
+  .portal-btn.active{border-left:none;border-bottom-color:var(--torch);background:transparent}
+  .rail-foot{display:none}
+  .panel{margin-left:0;padding:1.75rem 1.25rem 3rem}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 </style>
+
 </head>
 <body>
 <div class="hdr">
   <div class="hdr-logo">WM</div>
   <div class="hdr-text">
-    <div class="hdr-wordmark">ACOE <span>WorkMap</span></div>
-    <div class="hdr-sub">Staff, funding, program, and site overlap connector · Pilot</div>
+    <div class="hdr-wordmark">ACOE<br>Work<span>Map</span></div>
+    <div class="hdr-sub">Who should be at the table?</div>
   </div>
+  <div class="portal-nav">
+    <button class="portal-btn active" id="pbtn-home" onclick="showPortal('home')">The Table</button>
+    <button class="portal-btn" id="pbtn-overlap" onclick="showPortal('overlap')">Build a Request</button>
+    <button class="portal-btn" id="pbtn-grants" onclick="showPortal('grants')">Funding Index</button>
+    <button class="portal-btn" id="pbtn-agencies" onclick="showPortal('agencies')">Partner Agencies</button>
+    <button class="portal-btn" id="pbtn-glossary" onclick="showPortal('glossary')">How to Read This</button>
+  </div>
+  <div class="rail-foot">Pilot · Feb 2026 org chart<br><a href="mailto:gbrown@acoe.org?subject=WorkMap feedback">Send feedback</a></div>
 </div>
-<div class="portal-nav">
-  <button class="portal-btn active" id="pbtn-home" onclick="showPortal('home')">Start</button>
-  <button class="portal-btn" id="pbtn-overlap" onclick="showPortal('overlap')">Find Contact</button>
-  <button class="portal-btn" id="pbtn-grants" onclick="showPortal('grants')">Funding &amp; Grants</button>
-  <button class="portal-btn" id="pbtn-agencies" onclick="showPortal('agencies')">Partner Agencies</button>
-  <button class="portal-btn" id="pbtn-glossary" onclick="showPortal('glossary')">Glossary</button>
 </div>
 <!-- HOME -->
 <section class="panel" id="portal-home">
-  <div class="panel-hdr">
-    <h2>Where does your work connect?</h2>
-    <p>Choose a work area to see staff, funding, partner agencies, sites, and deliverables that overlap with your work. Results are suggested starting points — not confirmed ownership decisions.</p>
-  </div>
+  <h1 class="hero-q">Who should be at the table for <span class="blank" id="hero-blank">your work</span>?</h1>
+  <p class="hero-sub">Pick the work below. WorkMap shows the ACOE people, funding, and partner agencies that overlap, so the right people are in the room from the start.</p>
+  <div class="hero-note">Pilot. Suggested starting points, not confirmed ownership</div>
   <div class="click-guide">
     <button onclick="document.getElementById('work-area-start').scrollIntoView({behavior:'smooth'})">
       <div class="click-guide-k">I know my area</div>
@@ -195,7 +285,7 @@ tr:hover td{background:var(--slate-l)}
     </div>
   </details>
   <div id="work-area-start">
-    <h3 style="font-size:.9rem;font-weight:900;margin-bottom:.5rem">Work Areas</h3>
+    <h3 style="font-family:Archivo,sans-serif;font-size:.85rem;font-weight:800;margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.09em">Choose the work</h3>
     <div class="work-search"><input id="work-search" placeholder="Search work areas..." oninput="renderWorkAreas()"></div>
     <div class="work-grid" id="work-grid"></div>
   </div>
@@ -207,8 +297,8 @@ tr:hover td{background:var(--slate-l)}
     <div id="results-count" style="font-size:.78rem;color:var(--ink4);margin-bottom:.6rem"></div>
     <div id="route-preview"></div>
     <div class="results-grid">
-      <div><div class="results-header"><h3>Top staff matches</h3></div><div id="staff-cards"></div></div>
-      <div><div class="results-header"><h3>Top funding matches</h3></div><div id="grant-cards"></div></div>
+      <div><div class="results-header"><h3>At the table: ACOE people</h3></div><div id="staff-cards"></div></div>
+      <div><div class="results-header"><h3>On the table: funding and partners</h3></div><div id="grant-cards"></div></div>
     </div>
   </div>
 </section>
@@ -259,8 +349,8 @@ tr:hover td{background:var(--slate-l)}
     <div class="callout">Results are suggested starting points, not confirmed ownership decisions. Verify before routing.</div>
     <div id="step3-route"></div>
     <div class="results-grid" style="margin-top:.75rem">
-      <div><div class="results-header"><h3>Staff matches</h3></div><div id="step3-staff"></div></div>
-      <div><div class="results-header"><h3>Funding matches</h3></div><div id="step3-grants"></div></div>
+      <div><div class="results-header"><h3>At the table: ACOE people</h3></div><div id="step3-staff"></div></div>
+      <div><div class="results-header"><h3>On the table: funding and partners</h3></div><div id="step3-grants"></div></div>
     </div>
     <div class="step-btns"><button class="back-btn" onclick="goStep(2)">Adjust Signals</button><button class="nav-btn" onclick="goStep(4)">Draft Outreach</button></div>
   </div>
@@ -487,7 +577,7 @@ function grantStaff(grantId){
 
 function staffCard(person){
   const isFirst=person===lastResults.primary;
-  const label=isFirst?'Suggested starting point':person.reasons.some(r=>r.key==='grants')?'Direct funding link':person.reasons.length>=3?'Strong overlap':'Related overlap';
+  const label=isFirst?'First seat: start here':person.reasons.some(r=>r.key==='grants')?'Direct funding link':person.reasons.length>=3?'Strong overlap':'Related overlap';
   const tone=isFirst?'green':person.reasons.some(r=>r.key==='grants')?'teal':'gold';
   const initials=person.name.split(' ').map(w=>w[0]).join('').slice(0,2);
   return`<div class="match-card"><div class="match-top"><div class="match-icon" style="background:var(--teal-l);color:var(--teal)">${esc(initials)}</div><div class="match-info"><div class="match-name">${esc(person.name)}</div><div class="match-tagline">${esc(person.role)}</div></div><span class="pill ${tone}">${esc(label)}</span></div><div class="match-tags">${person.reasons.map(r=>`<span class="chip">${esc(r.text)}</span>`).join('')}</div><details class="card-details"><summary>More about this person</summary><div class="detail-grid"><div class="detail-item"><div class="detail-label">Contact</div><div class="detail-value"><a href="mailto:${esc(person.email)}">${esc(person.email)}</a></div></div><div class="detail-item"><div class="detail-label">Programs</div><div class="detail-value">${chips(person.programs)}</div></div><div class="detail-item"><div class="detail-label">Why they appear</div><div class="detail-value">${person.reasons.map(r=>esc(r.text)).join(' · ')}</div></div><div class="detail-item"><div class="detail-label">Note</div><div class="detail-value">${esc(person.note||'')}</div></div></div>${feedbackLink(person.name)}</details></div>`;
@@ -519,7 +609,7 @@ function renderFundingLaneSet(records){
 
 function fundingLaneSections(records){return renderFundingLaneSet(records);}
 
-function routeCard(primary,cc,finalView){if(!primary)return'';const ccText=cc.length?cc.map(p=>esc(p.name)).join(', '):'No additional stakeholders from these signals.';return`<div class="route-card"><div class="route-label">${finalView?'Suggested email route':'Suggested starting point'}</div><div class="route-name">${esc(primary.name)}</div><div class="route-role">${esc(primary.role)}</div><div class="route-reason"><strong>Why suggested:</strong> ${esc(primary.reasons.map(r=>r.text).join(', '))}<br><strong>Loop in:</strong> ${ccText}</div><div class="route-actions"><a class="route-btn" href="mailto:${esc(primary.email)}">Email suggested contact</a><button class="route-btn" onclick="goStep(4)">Prepare email</button></div></div>`}
+function routeCard(primary,cc,finalView){if(!primary)return'';const ccText=cc.length?cc.map(p=>esc(p.name)).join(', '):'No additional stakeholders from these signals.';return`<div class="route-card"><div class="route-label">${finalView?'First seat: your email goes to':'First seat: start here'}</div><div class="route-name">${esc(primary.name)}</div><div class="route-role">${esc(primary.role)}</div><div class="route-reason"><strong>Why suggested:</strong> ${esc(primary.reasons.map(r=>r.text).join(', '))}<br><strong>Loop in:</strong> ${ccText}</div><div class="route-actions"><a class="route-btn" href="mailto:${esc(primary.email)}">Email suggested contact</a><button class="route-btn" onclick="goStep(4)">Prepare email</button></div></div>`}
 
 function renderResults(){
   const r=calculateResults();lastResults=r;
@@ -547,13 +637,13 @@ function selectWorkArea(id){
   area.sites.forEach(x=>selected.sites.add(x));
   area.grants.forEach(x=>selected.grants.add(x));
   area.staff.forEach(pid=>{const p=DATA.staff.find(s=>s.id===pid);if(p)p.programs.slice(0,2).forEach(x=>selected.programs.add(x))});
-  document.getElementById('home-results-title').textContent=area.label+' — Overlap Results';
+  document.getElementById('home-results-title').textContent='The table for '+area.label;const hb=document.getElementById('hero-blank');if(hb)hb.textContent=area.label;
   document.getElementById('home-results').classList.remove('hidden');
   renderResults();
   document.getElementById('home-results').scrollIntoView({behavior:'smooth'});
 }
 
-function clearSelection(){Object.values(selected).forEach(s=>s.clear());document.querySelectorAll('.work-card').forEach(c=>c.classList.remove('selected'));document.getElementById('home-results').classList.add('hidden')}
+function clearSelection(){const hb=document.getElementById('hero-blank');if(hb)hb.textContent='your work';Object.values(selected).forEach(s=>s.clear());document.querySelectorAll('.work-card').forEach(c=>c.classList.remove('selected'));document.getElementById('home-results').classList.add('hidden')}
 
 function renderGrantPortal(){
   const body=document.getElementById('grant-portal-body');if(!body)return;
@@ -582,7 +672,7 @@ function agencyCard(agency,records){
 
 function renderGlossaryPortal(){
   const body=document.getElementById('glossary-portal-body');if(!body)return;
-  const terms=[['Funding record','A grant, partner funding stream, or public program record used to show possible work overlap.'],['Partner record','A record owned by an outside agency. Useful for overlap discovery but not an ACOE-owned grant.'],['Internal liaison','The ACOE person or team who may know how ACOE connects to an outside agency or funding record.'],['Suggested starting point','The first person WorkMap recommends based on mapped signals. Not a confirmed ownership decision.'],['Directly mapped','A record with a known local staff/funding relationship in the pilot data.'],['Likely overlap','A record or person sharing work signals such as site, population, deliverable, need, or program.'],['Needs validation','A partner, draft, or unconfirmed record that must be checked before routing.'],['Deliverable','A concrete activity or product — coaching, data sharing, family navigation, case conferencing, etc.'],['Target population','The group the work is meant to serve — foster youth, English learners, early learners, families, etc.'],['Need category','The broad reason work overlaps — attendance, housing, re-entry, food security, early learning, etc.']];
+  const terms=[['Funding record','A grant, partner funding stream, or public program record used to show possible work overlap.'],['Partner record','A record owned by an outside agency. Useful for overlap discovery but not an ACOE-owned grant.'],['Internal liaison','The ACOE person or team who may know how ACOE connects to an outside agency or funding record.'],['First seat: start here','The first person WorkMap recommends based on mapped signals. Not a confirmed ownership decision.'],['Directly mapped','A record with a known local staff/funding relationship in the pilot data.'],['Likely overlap','A record or person sharing work signals such as site, population, deliverable, need, or program.'],['Needs validation','A partner, draft, or unconfirmed record that must be checked before routing.'],['Deliverable','A concrete activity or product — coaching, data sharing, family navigation, case conferencing, etc.'],['Target population','The group the work is meant to serve — foster youth, English learners, early learners, families, etc.'],['Need category','The broad reason work overlaps — attendance, housing, re-entry, food security, early learning, etc.']];
   body.innerHTML=`<div class="glossary-grid">${terms.map(([t,d])=>`<div class="glossary-card"><h3>${esc(t)}</h3><p>${esc(d)}</p></div>`).join('')}</div>`;
 }
 
