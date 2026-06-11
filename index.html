@@ -637,7 +637,7 @@ function selectWorkArea(id){
   area.needs.slice(0,3).forEach(x=>selected.needs.add(x));
   area.targets.slice(0,3).forEach(x=>selected.targets.add(x));
   area.deliverables.slice(0,3).forEach(x=>selected.deliverables.add(x));
-  area.sites.forEach(x=>selected.sites.add(x));
+  area.sites.filter(x=>x!=='Countywide'&&x!=='ACOE Central').forEach(x=>selected.sites.add(x));
   area.grants.forEach(x=>selected.grants.add(x));
   area.staff.forEach(pid=>{const p=DATA.staff.find(s=>s.id===pid);if(p)p.programs.slice(0,2).forEach(x=>selected.programs.add(x))});
   document.getElementById('home-results-title').textContent='The table for '+area.label;const hb=document.getElementById('hero-blank');if(hb)hb.textContent=area.label;
