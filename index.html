@@ -163,6 +163,7 @@ tr:hover td{background:var(--bg)}
     <button class="portal-btn active" id="pbtn-home" onclick="showPortal('home')">The Table</button>
     <button class="portal-btn" id="pbtn-overlap" onclick="showPortal('overlap')">Build a Request</button>
     <button class="portal-btn" id="pbtn-grants" onclick="showPortal('grants')">Funding Index</button>
+    <button class="portal-btn" id="pbtn-grantfit" onclick="showPortal('grantfit')">Grant Fit</button>
     <button class="portal-btn" id="pbtn-agencies" onclick="showPortal('agencies')">Partner Agencies</button>
     <button class="portal-btn" id="pbtn-glossary" onclick="showPortal('glossary')">How to Read This</button>
   </div>
@@ -299,6 +300,26 @@ tr:hover td{background:var(--bg)}
   <div id="grant-portal-body"></div>
 </section>
 <!-- AGENCIES -->
+<section class="panel hidden" id="portal-grantfit">
+  <div class="panel-hdr">
+    <h2>Grant Fit</h2>
+    <p>Considering a grant? Describe what it funds and who it serves. WorkMap routes it to the ACOE people and programs that fit, flags funding you already hold that overlaps (your anti-replication check), and lists partner agencies serving the same students. Built for go / no-go pursuit decisions.</p>
+  </div>
+  <div class="callout">Describe the grant in signals, not a link. This works for any grant, including ones with no public page yet. Output is a suggested starting point, not a pursuit decision.</div>
+  <div class="scope-form">
+    <div class="scope-field"><label>Grant name</label><input id="gf-name" type="text" placeholder="e.g. CASF Broadband Adoption Account - July 2026"></div>
+    <div class="scope-field"><label>Funder</label><input id="gf-funder" type="text" placeholder="e.g. CPUC"></div>
+  </div>
+  <div class="signal-section" style="margin-top:1.5rem"><h4>What does it fund? (deliverables)</h4><div class="signal-grid" id="gf-deliverables"></div></div>
+  <div class="signal-section"><h4>Who does it serve? (target populations)</h4><div class="signal-grid" id="gf-targets"></div></div>
+  <div class="signal-section"><h4>What need areas does it address?</h4><div class="signal-grid" id="gf-needs"></div></div>
+  <div class="signal-section"><h4>Where would it operate? (sites / scope)</h4><div class="signal-grid" id="gf-sites"></div></div>
+  <div class="step-btns">
+    <button class="nav-btn" onclick="runGrantFit()">Find the fit</button>
+    <button class="back-btn" onclick="clearGrantFit()">Clear</button>
+  </div>
+  <div id="gf-results" style="margin-top:1.75rem"></div>
+</section>
 <section class="panel hidden" id="portal-agencies">
   <div class="panel-hdr"><h2>Partner Agencies</h2><p>Outside agency records grouped by agency, possible ACOE liaison, and overlap signals.</p></div>
   <div id="agency-portal-body"></div>
@@ -666,10 +687,11 @@ function sendEmail(){
 
 function showPortal(id){
   window.scrollTo({top:0,behavior:'smooth'});
-  ['portal-home','portal-overlap','portal-grants','portal-agencies','portal-glossary','portal-staff','portal-programs','portal-admin'].forEach(pid=>{const el=document.getElementById(pid);if(el)el.classList.add('hidden')});
+  ['portal-home','portal-overlap','portal-grants','portal-grantfit','portal-agencies','portal-glossary','portal-staff','portal-programs','portal-admin'].forEach(pid=>{const el=document.getElementById(pid);if(el)el.classList.add('hidden')});
   const target=document.getElementById('portal-'+id);if(target)target.classList.remove('hidden');
   document.querySelectorAll('.portal-btn').forEach(b=>b.classList.remove('active'));
   const btn=document.getElementById('pbtn-'+id);if(btn)btn.classList.add('active');
+  if(id==='grantfit'){populateGrantFit();}
   if(id==='overlap'){populateScopeForm();document.querySelectorAll('[id^="step"]').forEach((el,i)=>{el.classList.toggle('hidden',i!==0)})}
   if(id==='grants')renderGrantPortal();
   if(id==='agencies')renderAgencyPortal();
@@ -708,6 +730,91 @@ renderWorkAreas();
     if(anchor)anchor.insertAdjacentElement('afterend',det);
   }catch(e){}
 })();
+
+/* ===== GRANT FIT ===== */
+const gfSel={deliverables:new Set(),targets:new Set(),needs:new Set(),sites:new Set()};
+function gfSignalItems(key){const s=DATA.signals.find(x=>x.key===key);return s?s.items:[]}
+function populateGrantFit(){
+  [['deliverables','gf-deliverables'],['targets','gf-targets'],['needs','gf-needs'],['sites','gf-sites']].forEach(([key,elId])=>{
+    const el=document.getElementById(elId);if(!el)return;
+    el.innerHTML=gfSignalItems(key).map(([k,label])=>`<button class="signal-btn" data-gf="${key}" data-k="${esc(k)}" onclick="toggleGf('${key}','${esc(k)}',this)">${esc(label)}</button>`).join('');
+  });
+}
+function toggleGf(key,k,btn){
+  if(gfSel[key].has(k)){gfSel[key].delete(k);btn.classList.remove('active')}
+  else{gfSel[key].add(k);btn.classList.add('active')}
+}
+function clearGrantFit(){
+  Object.values(gfSel).forEach(s=>s.clear());
+  document.querySelectorAll('#portal-grantfit .signal-btn').forEach(b=>b.classList.remove('active'));
+  const n=document.getElementById('gf-name');if(n)n.value='';
+  const f=document.getElementById('gf-funder');if(f)f.value='';
+  const r=document.getElementById('gf-results');if(r)r.innerHTML='';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function runGrantFit(){
+  const total=gfSel.deliverables.size+gfSel.targets.size+gfSel.needs.size+gfSel.sites.size;
+  const out=document.getElementById('gf-results');
+  if(total<2){out.innerHTML='<div class="empty-state">Pick at least two signals (a deliverable and a population is a good start) so the fit is meaningful.</div>';return}
+  // Borrow the global selected engine
+  const saved={};Object.keys(selected).forEach(k=>saved[k]=new Set(selected[k]));
+  Object.values(selected).forEach(s=>s.clear());
+  gfSel.deliverables.forEach(x=>selected.deliverables.add(x));
+  gfSel.targets.forEach(x=>selected.targets.add(x));
+  gfSel.needs.forEach(x=>selected.needs.add(x));
+  gfSel.sites.filter(x=>x!=='Countywide'&&x!=='ACOE Central').forEach(x=>selected.sites.add(x));
+  // Pull programs implied by matched needs so staff scoring has program signal too
+  const staff=DATA.staff.map(scoreStaff).filter(i=>i.reasons.length>0).sort((a,b)=>b.score-a.score||b.priority-a.priority);
+  const grants=currentGrants().map(scoreGrant).filter(i=>i.score>0).sort((a,b)=>b.score-a.score);
+  // Restore
+  Object.keys(saved).forEach(k=>{selected[k]=saved[k]});
+
+  const name=(document.getElementById('gf-name').value||'this grant').trim();
+  const funder=(document.getElementById('gf-funder').value||'').trim();
+  const lead=staff[0];
+  const internalPartners=staff.slice(1,5);
+  const acoeOverlap=grants.filter(g=>fundingOwnerType(g)==='acoe').slice(0,4);
+  const partnerOverlap=grants.filter(g=>fundingOwnerType(g)==='partner'&&!/ACOE|Office of Education/i.test(g.agency));
+  const partnerAgencies=unique(partnerOverlap.map(g=>g.agency));
+
+  // Fit verdict
+  let verdict,vtone;
+  if(lead&&lead.score>=120&&staff.length>=2){verdict='Strong fit. A clear internal lead and partners surface from these signals.';vtone='green'}
+  else if(lead&&lead.score>=60){verdict='Moderate fit. There is a plausible internal home, but confirm capacity and lead ownership before pursuing.';vtone='gold'}
+  else{verdict='Weak or unclear fit from these signals. Either the grant is outside current ACOE work, or the signals need refining.';vtone='gold'}
+
+  let html='';
+  html+=`<div class="route-card"><div class="route-label">Grant Fit: ${esc(name)}${funder?' &middot; '+esc(funder):''}</div>`;
+  if(lead){html+=`<div class="route-name">${esc(lead.name)}</div><div class="route-role">${esc(lead.role)}</div><div class="route-reason"><strong>Suggested internal lead.</strong> ${esc(lead.reasons.map(r=>r.text).join(' &middot; '))}</div>`;
+    const liaisonEmail=lead.email||'';
+    const subj=encodeURIComponent('Potential grant fit: '+name);
+    const body=encodeURIComponent('Hi '+lead.name.split(' ')[0]+',\n\nI came across '+name+(funder?' ('+funder+')':'')+' and WorkMap flagged your work as the closest fit at ACOE. Before I go further on a pursue / no-go, could we take 15 minutes to look at whether this lands in your area and who else should be at the table?\n\nQuick context on the overlap:\n- Funds: '+[...gfSel.deliverables].map(k=>labelFor(k)).join(', ')+'\n- Serves: '+[...gfSel.targets].map(k=>labelFor(k)).join(', ')+'\n\nThanks,\nGreg');
+    html+=`<div class="route-actions"><a class="route-btn" href="mailto:${esc(liaisonEmail)}?subject=${subj}&body=${body}">Draft email to lead</a></div>`;
+  } else {html+='<div class="route-reason">No clear internal lead from these signals. Try adding the core deliverable and population the grant targets.</div>'}
+  html+='</div>';
+
+  // Verdict line
+  html+=`<div class="callout" style="background:${vtone==='green'?'var(--green-l)':'var(--gold-l)'};color:${vtone==='green'?'var(--green)':'var(--gold)'}">${esc(verdict)}</div>`;
+
+  // Internal partners
+  html+='<div class="results-header" style="margin-top:1.25rem"><h3>Who else should be at the table (ACOE)</h3></div>';
+  if(internalPartners.length){html+=internalPartners.map(staffCard).join('')}
+  else{html+='<div class="empty-state">No additional internal stakeholders surfaced.</div>'}
+
+  // Anti-replication check
+  html+='<div class="results-header" style="margin-top:1.5rem"><h3>Funding you already hold that overlaps (anti-replication check)</h3></div>';
+  if(acoeOverlap.length){html+='<p style="font-size:.8rem;color:var(--ink3);margin-bottom:.6rem">Before pursuing, check these. If the work is already funded, coordinate instead of duplicating.</p>'+acoeOverlap.map(grantCard).join('')}
+  else{html+='<div class="empty-state">No existing ACOE funding overlaps these signals. This likely fills a genuine gap.</div>'}
+
+  // Partner candidates
+  html+='<div class="results-header" style="margin-top:1.5rem"><h3>Partner agencies serving the same students (co-applicant / MOU candidates)</h3></div>';
+  if(partnerAgencies.length){html+='<div class="quick-guide">'+partnerAgencies.map(a=>`<span class="guide-pill">${esc(a)}</span>`).join('')+'</div>'+partnerOverlap.slice(0,4).map(grantCard).join('')}
+  else{html+='<div class="empty-state">No partner agencies in the map serve these signals yet. A partnership gap worth noting.</div>'}
+
+  out.innerHTML=html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
 </script>
 </body>
 </html>
